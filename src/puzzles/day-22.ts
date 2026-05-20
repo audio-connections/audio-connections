@@ -7,7 +7,7 @@ const puzzle: Puzzle = {
   releaseAt: '2026-05-31T00:00:00Z',
   themes: [
     {
-      theme: '"Instructional Dance Songs',
+      theme: 'Instructional Dance Songs',
       tracks: [
         { id: 495004214, artist: 'Freak Nasty', title: 'Da Dip' },
         { id: 1444414896, artist: 'Soulja Boy', title: 'Crank That (Soulja Boy)' },

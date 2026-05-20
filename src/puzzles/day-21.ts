@@ -4,7 +4,7 @@ const puzzle: Puzzle = {
   day: 21,
   date: '2026-05-30',
   author: 'Frank Arana',
-  releaseAt: '2026-05-29T00:00:00Z',
+  releaseAt: '2026-05-30T00:00:00Z',
   themes: [
     {
       theme: '"Instructional Dance Songs',

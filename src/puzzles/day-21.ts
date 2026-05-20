@@ -37,7 +37,7 @@ const puzzle: Puzzle = {
       theme: 'Songs in Shrek (2001)',
       tracks: [
         { id: 1440915693, artist: 'Smash Mouth', title: 'All Star' },
-        { id: 4512481, artist: 'Monkees', title: "I'm a Believer" },
+        { id: 1440517522, artist: 'Smash Mouth', title: "I'm a Believer" },
         { id: 1872452691, artist: 'Joan Jett', title: 'Bad Reputation' },
         { id: 1361593532, artist: 'The Proclaimers', title: "I'm on my way" },
       ],

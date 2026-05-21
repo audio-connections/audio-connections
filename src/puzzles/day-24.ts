@@ -20,7 +20,7 @@ const puzzle: Puzzle = {
         { id: 1109715066, artist: 'Radiohead', title: '15 Step' },
         { id: 1415203735, artist: 'Sting', title: 'Seven Days' },
         { id: 467086622, artist: 'Harry Belafonte', title: 'Turn the World Around' },
-        { id: 1547316002, artist: 'Taylor Swift', title: '' },
+        { id: 1547316002, artist: 'Taylor Swift', title: 'Closure' },
       ],
     },
     {

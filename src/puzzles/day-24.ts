@@ -1,7 +1,7 @@
 import type { Puzzle } from '../types';
 
 const puzzle: Puzzle = {
-  day: 1,
+  day: 24,
   date: '2026-06-02',
   author: 'Frankie Arana',
   themes: [
@@ -29,7 +29,7 @@ const puzzle: Puzzle = {
         { id: 1444773950, artist: 'Ice Cube', title: "Ain't Got No Haters" },
         { id: 1752591731, artist: 'Kali Uchis', title: 'Never Be Yours' },
         { id: 1464818052, artist: 'Your Old Droog', title: 'Train Love' },
-        { id: 1440791850, artist: 'Dizee Rascal', title: 'Chillin Wiv Da Mandem' },
+        { id: 1440791850, artist: 'Dizzee Rascal', title: 'Chillin Wiv Da Mandem' },
       ],
     },
     {

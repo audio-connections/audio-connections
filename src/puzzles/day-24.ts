@@ -15,12 +15,12 @@ const puzzle: Puzzle = {
       ],
     },
     {
-      theme: '5/4 Time Signature',
+      theme: '"Step" in the song title',
       tracks: [
         { id: 1109715066, artist: 'Radiohead', title: '15 Step' },
-        { id: 1415203735, artist: 'Sting', title: 'Seven Days' },
-        { id: 467086622, artist: 'Harry Belafonte', title: 'Turn the World Around' },
-        { id: 1547316002, artist: 'Taylor Swift', title: 'Closure' },
+        { id: 1440773792, artist: 'Bobby Brown', title: 'Every Little Step' },
+        { id: 1450141547, artist: 'The Cardigans', title: 'Step On Me' },
+        { id: 157281771, artist: 'New Kids on the Block', title: 'Step by Step' },
       ],
     },
     {

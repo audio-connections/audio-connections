@@ -38,7 +38,7 @@ const puzzle: Puzzle = {
       tracks: [
         { id: 1440806768, artist: 'Queen', title: 'Bohemian Rhapsody', note: 'Bohemian Rhapsody (2018) — Freddie Mercury / Queen' },
         { id: 1440910931, artist: 'Elton John', title: 'Rocket Man', note: 'Rocketman (2019) — Elton John' },
-        { id: 824807545, artist: 'Johnny Cash', title: 'Ring of Fire', note: 'Ring of Fire (2013) — June Carter Cash' },
+        { id: 1890335608, artist: 'Johnny Cash', title: 'I Walk the Line', note: 'Walk the Line (2005) — Johnny Cash' },
         { id: 1440856228, artist: 'Amy Winehouse', title: 'Back to Black', note: 'Back to Black (2024) — Amy Winehouse' },
       ],
     },

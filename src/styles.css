@@ -2210,6 +2210,25 @@ h1 {
   text-transform: uppercase;
   color: var(--text-primary);
   white-space: nowrap;
+  margin: 0;
+}
+/* Author credit beside the compact title — mirrors the portrait byline's
+   muted mono treatment, without the date (inferrable from the day pill). */
+.chrome-title-group {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+.chrome-author-compact {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* ----- Mobile chrome bottom ------------------------------------------- */

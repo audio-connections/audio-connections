@@ -224,9 +224,14 @@ export function App() {
 
         {isMobile && orientation === 'landscape' && (
           <div className="chrome-top-mobile chrome-top-mobile--landscape">
-            <h1 className="chrome-title-compact" data-testid="puzzle-heading">
-              Audio Connections {puzzle.day}
-            </h1>
+            <div className="chrome-title-group">
+              <h1 className="chrome-title-compact" data-testid="puzzle-heading">
+                Audio Connections {puzzle.day}
+              </h1>
+              <span className="chrome-author-compact">
+                by <span data-testid="puzzle-author">{puzzle.author}</span>
+              </span>
+            </div>
             <DaySelector
               days={dayStates}
               todayDay={todayDay}

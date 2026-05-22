@@ -156,7 +156,6 @@ body {
   .tile-label { margin: 7px 7px 0; padding: 6px 8px 7px; }
   .tile-screw.bl, .tile-screw.br { display: none; }
   .tile-track-no { font-size: 7px; letter-spacing: 0.16em; }
-  .tile-label-input:not(:placeholder-shown) { font-size: 16px; }
   .subtitle { font-size: 12px; margin: 12px 4px 16px; }
   /* Solved labels: shrink the SIDE rail. */
   .solved-row { padding: 10px 12px 12px 56px; }
@@ -568,9 +567,11 @@ h1 {
   background: transparent;
   border: none;
   color: var(--paper-ink);
-  /* mono "typewriter" when empty, handwriting when filled */
+  /* mono "typewriter" when empty, handwriting when filled. 16px in both
+     states avoids iOS WebKit's focus-zoom (triggers at <16px) and is
+     consistent across desktop and touch. */
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 16px;
   line-height: 1.3;
   letter-spacing: 0.02em;
   padding: 0;
@@ -589,7 +590,10 @@ h1 {
   color: rgba(26, 22, 16, 0.32);
   font-style: italic;
   font-family: var(--font-mono);
-  font-size: 11px;
+  /* Smaller than the input's 16px so the unfilled label feels quiet —
+     ::placeholder is ignored by iOS's input-focus zoom heuristic, so
+     this doesn't reintroduce the auto-zoom bug. */
+  font-size: 13px;
 }
 .tile-label-input:focus {
   outline: none;
@@ -2101,7 +2105,7 @@ h1 {
   border: none;
   color: var(--paper-ink);
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 16px;
   line-height: 1.2;
   padding: 0;
   outline: none;
@@ -2113,10 +2117,11 @@ h1 {
 .tile-l-label-input::placeholder {
   color: rgba(26, 22, 16, 0.32);
   font-style: italic;
+  font-size: 13px;
 }
 .tile-l-label-input:not(:placeholder-shown) {
   font-family: var(--font-hand);
-  font-size: 14px;
+  font-size: 17px;
   color: #0d3a72;
   white-space: nowrap;
 }
@@ -2313,4 +2318,5 @@ h1 {
   .tile-l.matched { animation: none; }
   .tile-l.exiting { transition: opacity 1ms; transform: none; }
 }
+
 

@@ -140,15 +140,7 @@ body {
   min-height: 100dvh;
   -webkit-font-smoothing: antialiased;
 }
-.app-container {
-  max-width: 740px;
-  margin: 0 auto;
-  padding: 28px 20px 40px;
-}
 @media (max-width: 600px) {
-  .app-container {
-    padding: 18px 14px 32px;
-  }
   /* Bay/grid keep the 4-col 130px floor + horizontal scroll (contract). */
   .bay { padding: 10px 8px; }
   .grid { gap: 8px; }

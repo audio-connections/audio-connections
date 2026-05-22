@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-export type Orientation = 'portrait' | 'landscape';
+type Orientation = 'portrait' | 'landscape';
 
 const ORIENTATION_QUERY = '(orientation: landscape)';
 // Matches the --bp-tablet token in styles.css. Kept in JS so the chrome

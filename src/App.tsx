@@ -168,7 +168,7 @@ export function App() {
 
   return (
     <div
-      className={`app-shell tile-shape-${TILE_SHAPE}`}
+      className="app-shell"
       data-orientation={orientation}
       data-has-solved={hasSolved ? 'true' : 'false'}
     >

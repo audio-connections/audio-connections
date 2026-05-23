@@ -8,10 +8,10 @@ GREEN='\033[1;32m'
 NC='\033[0m'
 
 echo "NOTE: spelling and punctuation may cause it to not find the track, skim the curl dump and determine if its good enough"
-echo "notably this script does not handle double quotes (example: day-1.ts)"
-cat $FILE | grep "id:" | while read a; do
-    id=$(echo $a| sed -e "s/,.*//" | sed -e "s/.*: //")
-    name=$(echo $a| sed -e "s/.*title: '//" | sed -e "s/'.*//")
+cat $FILE | shuf | grep "id:" | while read a; do
+    id=$(echo $a| sed -e "s/,.*//" -e "s/.*: //")
+    name=$(echo $a | sed -e "s/.*title: //" -e "s/' },\|\" },//" -e "s/^'\|^\"//")
+
     echo -n $name"  "
     curl -s https://itunes.apple.com/lookup?id=$id | grep -i "$name" > /dev/null
     if [ $? -eq 0 ]; then

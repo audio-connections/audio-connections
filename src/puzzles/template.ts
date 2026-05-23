@@ -4,6 +4,7 @@ const puzzle: Puzzle = {
   day: 1,
   date: 'YYYY-MM-DD',
   author: 'Name goes here',
+  releaseAt: '2026-05-10T00:00:00Z',
   themes: [
     {
       theme: 'Set Theme',

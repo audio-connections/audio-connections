@@ -10,7 +10,7 @@ const puzzle: Puzzle = {
       theme: 'Bangers from the Sing movie soundrack',
       tracks: [
         { id: 1440912993, artist: 'Elton John', title: 'I\'m Still Standing' },
-        { id: 1440936016, artist: 'Taylor Swift', title: 'Shake it Off' },
+        { id: 1440936016, artist: 'Taylor Swift', title: 'Shake It Off' },
         { id: 1440806739, artist: 'Queen', title: 'Under Pressure' },
         { id: 192678693, artist: 'Leonard Cohen', title: 'Hallelujah' },
       ],
@@ -19,7 +19,7 @@ const puzzle: Puzzle = {
       theme: 'Songs with killer Saxophone solos',
       tracks: [
         { id: 429945616, artist: 'George Michael', title: 'Careless Whisper' },
-        { id: 1442810074, artist: 'Cary Rae Jepsen', title: 'Run Away With Me' },
+        { id: 1442810074, artist: 'Cary Rae Jepsen', title: 'Run Away with Me' },
         { id: 693606496, artist: 'Gerry Rafferty', title: 'Baker Street' },
         { id: 1445883162, artist: 'Gino Vannelli', title: 'I Just Wanna Stop' },
       ],
@@ -28,9 +28,9 @@ const puzzle: Puzzle = {
       theme: 'Smugglers and Pirates',
       tracks: [
         { id: 1694459811, artist: 'Elastic Justice', title: 'The Melody of Pirate Software' },
-        { id: 332518134, artist: 'Great Big Sea', title: 'French Purfume' },
+        { id: 332518134, artist: 'Great Big Sea', title: 'French Perfume' },
         { id: 1718025212, artist: 'MudLark', title: 'Budgie Smuggler' },
-        { id: 272454995, artist: 'Arrogant Worms', title: 'The Last Saskatchewan Pirate' },
+        { id: 951931645, artist: 'Arrogant Worms', title: 'The Last Saskatchewan Pirate' },
       ],
     },
     {

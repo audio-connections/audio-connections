@@ -29,7 +29,7 @@ const puzzle: Puzzle = {
       tracks: [
         { id: 1694459811, artist: 'Elastic Justice', title: 'The Melody of Pirate Software' },
         { id: 332518134, artist: 'Great Big Sea', title: 'French Perfume' },
-        { id: 1718025212, artist: 'MudLark', title: 'Budgie Smuggler' },
+        { id: 1718025213, artist: 'MudLark', title: 'Budgie Smuggler' },
         { id: 951931645, artist: 'Arrogant Worms', title: 'The Last Saskatchewan Pirate' },
       ],
     },

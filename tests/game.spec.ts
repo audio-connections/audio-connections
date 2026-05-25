@@ -508,14 +508,14 @@ test.describe('Audio Connections — cold load default day', () => {
 });
 
 test.describe('Audio Connections — media key / external pause sync', () => {
-  test('hardware media-key pause clears playing state from tile and button', async ({ page }) => {
-    // addInitScript must run before any navigation, so we navigate manually
-    // here instead of relying on a describe-level beforeEach.
+  // Both tests need the Audio stub installed before navigation, so each
+  // sets up addInitScript + navigates manually rather than using beforeEach.
+  async function installStub(page: Parameters<typeof test>[1]['page']) {
     await page.addInitScript(() => {
       // Replace the global Audio constructor with a controllable stub.
       // The real silent-WAV placeholder has 0 duration and fires 'ended' almost
-      // immediately, creating a race between that event and our assertion.
-      // The stub lets us drive play/pause lifecycle precisely from the test.
+      // immediately, creating a race between that event and our assertions.
+      // The stub lets us drive play/pause/resume lifecycle precisely.
       const testAudios: EventTarget[] = [];
       (window as unknown as Record<string, unknown>)['__testAudios'] = testAudios;
 
@@ -534,6 +534,9 @@ test.describe('Audio Connections — media key / external pause sync', () => {
 
         play() {
           this.paused = false;
+          // Fire 'play' synchronously — mirrors the browser, which dispatches
+          // the event before handing back the Promise.
+          this.dispatchEvent(new Event('play'));
           // Never resolves or rejects — keeps the element in a stable
           // "playing" state so the test can observe it without a race.
           return new Promise<void>(() => {});
@@ -551,7 +554,10 @@ test.describe('Audio Connections — media key / external pause sync', () => {
 
       (window as unknown as Record<string, unknown>)['Audio'] = StubAudio;
     });
+  }
 
+  test('hardware media-key pause clears playing state from tile and button', async ({ page }) => {
+    await installStub(page);
     await gotoDay(page, 1);
     const themes = groupByTheme(await readTrackIds(page));
     const playingId = themes.get(0)![0]!;
@@ -568,6 +574,34 @@ test.describe('Audio Connections — media key / external pause sync', () => {
 
     await expect(page.locator(`[data-testid="tile-${playingId}"]`)).not.toHaveClass(/playing/);
     await expect(page.locator('.play-btn.playing')).toHaveCount(0);
+  });
+
+  test('hardware media-key resume restores playing state on tile and button', async ({ page }) => {
+    await installStub(page);
+    await gotoDay(page, 1);
+    const themes = groupByTheme(await readTrackIds(page));
+    const playingId = themes.get(0)![0]!;
+    await page.getByTestId(`play-${playingId}`).click();
+    await expect(page.locator(`[data-testid="tile-${playingId}"]`)).toHaveClass(/playing/);
+
+    // OS pause — clears the tile's playing state.
+    await page.evaluate(() => {
+      const audios = (window as unknown as Record<string, unknown[]>)['__testAudios'];
+      const last = audios[audios.length - 1] as { pause(): void } | undefined;
+      last?.pause();
+    });
+    await expect(page.locator(`[data-testid="tile-${playingId}"]`)).not.toHaveClass(/playing/);
+
+    // OS resume — the browser calls audio.play() directly, firing 'play'.
+    // The UI should flip back to the playing state.
+    await page.evaluate(() => {
+      const audios = (window as unknown as Record<string, unknown[]>)['__testAudios'];
+      const last = audios[audios.length - 1] as { play(): void } | undefined;
+      last?.play();
+    });
+
+    await expect(page.locator(`[data-testid="tile-${playingId}"]`)).toHaveClass(/playing/);
+    await expect(page.locator('.play-btn.playing')).toHaveCount(1);
   });
 });
 

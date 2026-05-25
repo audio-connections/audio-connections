@@ -24,12 +24,28 @@ export function useAudio(tracks: LoadedTrack[]): UseAudio {
   const [playProgress, setPlayProgress] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const loadedSrcRef = useRef<string | null>(null);
+  // Counts pauses we initiated ourselves (stopAudio, src change while playing).
+  // The 'pause' listener decrements this and skips state updates for each one,
+  // so only external pauses (OS media keys, etc.) reach the UI sync path.
+  const suppressPauseRef = useRef(0);
 
   const ensureAudio = useCallback((): HTMLAudioElement => {
     let audio = audioRef.current;
     if (audio) return audio;
     audio = new Audio();
     audio.addEventListener('ended', () => {
+      setPlayingId(null);
+      setPlayProgress(0);
+    });
+    // Sync UI when the OS pauses the element externally (e.g. hardware media
+    // keys). The browser calls audio.pause() directly, bypassing React.
+    // suppressPauseRef absorbs each intentional pause we fire ourselves so
+    // only unexpected pauses reach this branch.
+    audio.addEventListener('pause', () => {
+      if (suppressPauseRef.current > 0) {
+        suppressPauseRef.current--;
+        return;
+      }
       setPlayingId(null);
       setPlayProgress(0);
     });
@@ -45,7 +61,11 @@ export function useAudio(tracks: LoadedTrack[]): UseAudio {
 
   const stopAudio = useCallback(() => {
     const audio = audioRef.current;
-    if (audio) audio.pause();
+    if (audio && !audio.paused) {
+      // Account for the 'pause' event this will fire so the handler skips it.
+      suppressPauseRef.current++;
+      audio.pause();
+    }
     setPlayingId(null);
     setPlayProgress(0);
   }, []);
@@ -64,6 +84,9 @@ export function useAudio(tracks: LoadedTrack[]): UseAudio {
 
       const src = track.blobUrl ?? track.previewUrl;
       if (loadedSrcRef.current !== src) {
+        // Changing src on a playing element implicitly pauses it and fires
+        // 'pause'. Account for that event so the handler skips it.
+        if (!audio.paused) suppressPauseRef.current++;
         audio.src = src;
         loadedSrcRef.current = src;
       } else {

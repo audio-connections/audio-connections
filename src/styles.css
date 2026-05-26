@@ -2996,21 +2996,23 @@ h1 {
   top: max(10px, env(safe-area-inset-top));
   right: max(10px, env(safe-area-inset-right));
   z-index: 50;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
   background: transparent;
   border: 1px solid var(--text-engraved);
   color: var(--text-muted);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  padding: 5px 10px;
-  border-radius: 3px;
+  border-radius: 4px;
+  padding: 0;
   cursor: pointer;
 }
 .settings-trigger:hover {
   color: var(--text-secondary);
   border-color: var(--text-muted);
 }
+.settings-trigger-icon { display: block; }
 
 .settings-overlay {
   position: fixed;

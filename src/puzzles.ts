@@ -5,7 +5,12 @@ const fail = (source: string, msg: string): never => {
   throw new PuzzleSchemaError(`${source}: ${msg}`);
 };
 
-function validatePuzzle(p: unknown, source: string): asserts p is Puzzle {
+/** Max length of `Puzzle.constraint`. Derived from the smallest layout
+ *  (mobile portrait, ~360px wide) and the pill's font metrics — see
+ *  PUZZLE_AUTHORS.md. Longer strings overflow the pill on narrow screens. */
+export const MAX_CONSTRAINT_LENGTH = 32;
+
+export function validatePuzzle(p: unknown, source: string): asserts p is Puzzle {
   if (!p || typeof p !== 'object') fail(source, 'not an object');
   const x = p as Record<string, unknown>;
 
@@ -18,8 +23,20 @@ function validatePuzzle(p: unknown, source: string): asserts p is Puzzle {
   if (typeof x.author !== 'string' || x.author.length === 0) {
     fail(source, 'author must be a non-empty string');
   }
-  if (x.releaseAt !== undefined && typeof x.releaseAt !== 'string') {
-    fail(source, 'releaseAt must be a string if present');
+  if (typeof x.releaseAt !== 'string' || x.releaseAt.length === 0) {
+    fail(source, 'releaseAt must be a non-empty string');
+  }
+  if (x.constraint !== undefined) {
+    if (typeof x.constraint !== 'string' || x.constraint.length === 0) {
+      fail(source, 'constraint must be a non-empty string if present');
+    }
+    const c = x.constraint as string;
+    if (c.length > MAX_CONSTRAINT_LENGTH) {
+      fail(
+        source,
+        `constraint is ${c.length} chars; max is ${MAX_CONSTRAINT_LENGTH} to avoid overflowing the heading pill on mobile`,
+      );
+    }
   }
   if (!Array.isArray(x.themes) || x.themes.length !== 4) {
     fail(source, 'themes must be an array of exactly 4');
@@ -94,10 +111,6 @@ export interface IsReleasedOpts {
 
 export function isReleased(p: Puzzle, opts: IsReleasedOpts = {}): boolean {
   if (opts.unlocked?.has(p.day)) return true;
-  // A puzzle with no releaseAt is treated as unreleased (hidden), not shown —
-  // fail-safe so a misconfigured day can't leak before its date. Every
-  // shipped puzzle should carry a releaseAt; the puzzles test enforces it.
-  if (!p.releaseAt) return false;
   return (opts.now ?? Date.now()) >= new Date(p.releaseAt).getTime();
 }
 

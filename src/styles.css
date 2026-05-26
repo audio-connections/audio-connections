@@ -201,6 +201,30 @@ h1 {
   font-size: 12px;
   text-align: center;
 }
+/* Optional puzzle-wide constraint shown as a pill in the heading area —
+   e.g. "All Beatles" or "Only #1 hits". Renders above the day picker
+   and below the byline on all three layouts. */
+.puzzle-constraint {
+  display: inline-block;
+  align-self: center;
+  margin: 0 auto 14px;
+  padding: 4px 12px;
+  border: 1px solid var(--text-secondary, #888);
+  border-radius: 999px;
+  background: rgba(255, 170, 85, 0.08);
+  color: #ffaa55;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.puzzle-constraint--compact {
+  margin: 4px 0 0;
+  padding: 2px 8px;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+}
 .unlock-countdown {
   text-align: center;
   font-size: 12px;

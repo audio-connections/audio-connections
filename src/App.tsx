@@ -195,6 +195,11 @@ export function App() {
               by <span data-testid="puzzle-author">{puzzle.author}</span> ·{' '}
               <span data-testid="puzzle-date">{dateText}</span>
             </div>
+            {puzzle.constraint && (
+              <div className="puzzle-constraint" data-testid="puzzle-constraint">
+                {puzzle.constraint}
+              </div>
+            )}
             <DaySelector
               days={dayStates}
               todayDay={todayDay}
@@ -217,6 +222,11 @@ export function App() {
               by <span data-testid="puzzle-author">{puzzle.author}</span> ·{' '}
               <span data-testid="puzzle-date">{dateText}</span>
             </div>
+            {puzzle.constraint && (
+              <div className="puzzle-constraint" data-testid="puzzle-constraint">
+                {puzzle.constraint}
+              </div>
+            )}
             <DaySelector
               days={dayStates}
               todayDay={todayDay}
@@ -245,6 +255,11 @@ export function App() {
               <span className="chrome-author-compact">
                 by <span data-testid="puzzle-author">{puzzle.author}</span>
               </span>
+              {puzzle.constraint && (
+                <span className="puzzle-constraint puzzle-constraint--compact" data-testid="puzzle-constraint">
+                  {puzzle.constraint}
+                </span>
+              )}
             </div>
             <DaySelector
               days={dayStates}

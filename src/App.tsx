@@ -20,6 +20,7 @@ import { EndPanel } from './components/EndPanel';
 import { ResetButton } from './components/ResetButton';
 import { IntroOverlay, INTRO_VERSION } from './components/intro/IntroOverlay';
 import { BrokenDayCard } from './components/BrokenDayCard';
+import { SettingsModal } from './components/SettingsModal';
 
 const STATUS_TIMEOUT_MS = 10000;
 
@@ -63,6 +64,7 @@ export function App() {
     saveIntroSeenVersion(INTRO_VERSION);
     setShowIntro(false);
   }, []);
+  const [showSettings, setShowSettings] = useState(false);
   /** Days unlocked at runtime — by Konami (all of them) or by the countdown
    *  ticking past a `releaseAt` (one at a time). Either case adds the day
    *  to this set; nobody reaches into module-level puzzle data anymore. */
@@ -179,6 +181,16 @@ export function App() {
   return (
     <>
       {showIntro && <IntroOverlay onDismiss={dismissIntro} />}
+      {showSettings && <SettingsModal onClose={() => setShowSettings(false)} />}
+      <button
+        type="button"
+        className="settings-trigger"
+        onClick={() => setShowSettings(true)}
+        data-testid="settings-trigger"
+        aria-label="Settings"
+      >
+        Settings
+      </button>
     <div
       className="app-shell"
       data-orientation={orientation}

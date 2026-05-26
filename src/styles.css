@@ -2987,32 +2987,49 @@ h1 {
 }
 
 /* ─────────────────────────────────────────────────────────────────────
-   SETTINGS — gear-like trigger pinned top-right of the app, modal that
-   pops over the chassis. Sized to be reachable on a phone in either
-   orientation without crowding the chrome.
+   SETTINGS — gear trigger tucked into the top-right of the chrome panel,
+   modal that pops over the chassis. Anchoring to chrome-top (rather than
+   the viewport) keeps the icon visually integrated with the panel
+   instead of floating against the screen edge.
    ───────────────────────────────────────────────────────────────────── */
+/* Chrome-top is the gear's containing block. Mobile already gets a
+   containing block via position:sticky; explicit relative covers desktop
+   too, with no other behavioral change. */
+.chrome-top { position: relative; }
+
+/* Pinned to the top-right of the chrome panel (chrome-top is the
+   containing block via position: sticky on mobile and explicit relative
+   on desktop). Borderless so it reads as a chrome accent rather than a
+   chip pasted on top of the panel. */
 .settings-trigger {
-  position: fixed;
-  top: max(10px, env(safe-area-inset-top));
+  position: absolute;
+  top: max(8px, env(safe-area-inset-top));
   right: max(10px, env(safe-area-inset-right));
-  z-index: 50;
+  z-index: 5;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
   background: transparent;
-  border: 1px solid var(--text-engraved);
+  border: none;
   color: var(--text-muted);
-  border-radius: 4px;
   padding: 0;
   cursor: pointer;
 }
-.settings-trigger:hover {
-  color: var(--text-secondary);
-  border-color: var(--text-muted);
-}
+.settings-trigger:hover { color: var(--text-secondary); }
 .settings-trigger-icon { display: block; }
+
+/* Landscape mobile: chrome-top is a short horizontal strip with the day
+   pill centered vertically. Center the gear the same way instead of
+   pinning it to the top edge, so the two visually share a row. */
+@media (max-width: 1023.98px) and (pointer: coarse) and (orientation: landscape) {
+  .settings-trigger {
+    top: 50%;
+    transform: translateY(-50%);
+    right: max(14px, env(safe-area-inset-right));
+  }
+}
 
 .settings-overlay {
   position: fixed;

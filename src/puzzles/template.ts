@@ -9,7 +9,7 @@ const puzzle: Puzzle = {
   date: 'YYYY-MM-DD',
   author: 'Name goes here',
   releaseAt: 'YYYY-MM-DDT00:00:00Z',
-  // constraint: 'All singing, all dancing',  // optional pill in the heading; max 32 chars
+  // constraint: 'All singing, all dancing',  // optional pill + DJ-note modal; keep it phrase-length (80 char soft cap)
   themes: [
     {
       theme: 'Set Theme',

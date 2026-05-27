@@ -5,10 +5,13 @@ const fail = (source: string, msg: string): never => {
   throw new PuzzleSchemaError(`${source}: ${msg}`);
 };
 
-/** Max length of `Puzzle.constraint`. Derived from the smallest layout
- *  (mobile portrait, ~360px wide) and the pill's font metrics — see
- *  PUZZLE_AUTHORS.md. Longer strings overflow the pill on narrow screens. */
-export const MAX_CONSTRAINT_LENGTH = 32;
+/** Soft cap on `Puzzle.constraint` length. The mobile layouts use the
+ *  modal (which wraps any length) and the desktop pill sits in a 940px
+ *  chrome row, so this isn't strictly a layout guard anymore — it's a
+ *  taste guard. The "DJ scribbled note" framing wants a phrase, not a
+ *  paragraph. 80 chars ≈ a single sentence and still fits the desktop
+ *  pill on one line at 11px mono. */
+export const MAX_CONSTRAINT_LENGTH = 80;
 
 export function validatePuzzle(p: unknown, source: string): asserts p is Puzzle {
   if (!p || typeof p !== 'object') fail(source, 'not an object');
@@ -34,7 +37,7 @@ export function validatePuzzle(p: unknown, source: string): asserts p is Puzzle 
     if (c.length > MAX_CONSTRAINT_LENGTH) {
       fail(
         source,
-        `constraint is ${c.length} chars; max is ${MAX_CONSTRAINT_LENGTH} to avoid overflowing the heading pill on mobile`,
+        `constraint is ${c.length} chars; soft cap is ${MAX_CONSTRAINT_LENGTH} — keep it to a phrase, not a sentence`,
       );
     }
   }

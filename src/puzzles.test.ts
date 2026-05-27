@@ -74,7 +74,7 @@ describe('validatePuzzle — constraint field', () => {
   it('rejects a constraint one char over the limit, naming the limit in the error', () => {
     const constraint = 'x'.repeat(MAX_CONSTRAINT_LENGTH + 1);
     expect(() => validatePuzzle({ ...base, constraint }, 'day-N.ts')).toThrow(
-      /constraint is \d+ chars; max is 32/,
+      new RegExp(`constraint is \\d+ chars; soft cap is ${MAX_CONSTRAINT_LENGTH}`),
     );
   });
 

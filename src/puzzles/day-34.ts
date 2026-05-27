@@ -5,6 +5,7 @@ const puzzle: Puzzle = {
   date: '2026-06-30',
   author: 'Thomas Ptacek',
   releaseAt: '2026-06-30T00:00:00Z',
+  constraint: 'Four Fab Fours',
   themes: [
     {
       theme: 'Songs About Women',

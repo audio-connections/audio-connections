@@ -28,7 +28,7 @@ const puzzle: Puzzle = {
       theme: 'Songs about drinking alone',
       tracks: [
         { id: 1583655305, artist: 'Merle Haggard', title: "I Think I'll Just Stay Here and Drink" },
-        { id: 1589508468, artist: 'Lorde', title: 'Liability' },
+        { id: 882945383, artist: 'Sia', title: 'Chandelier' },
         { id: 158182876, artist: 'Hank Williams', title: "There's a Tear In My Beer" },
         { id: 1611391433, artist: "George Thorogood and the Destroyers", title: 'I Drink Alone' },
       ],

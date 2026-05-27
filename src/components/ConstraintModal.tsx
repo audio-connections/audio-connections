@@ -51,15 +51,17 @@ export function ConstraintModal({ constraint, onDismiss }: ConstraintModalProps)
         <div className="constraint-modal-quote" data-testid="constraint-modal-text">
           &ldquo;{constraint}&rdquo;
         </div>
-        <button
-          type="button"
-          className="constraint-modal-ok"
-          onClick={onDismiss}
-          data-testid="constraint-modal-ok"
-          autoFocus
-        >
-          GOT IT &#9656;
-        </button>
+        <div className="constraint-modal-actions">
+          <button
+            type="button"
+            className="constraint-modal-ok"
+            onClick={onDismiss}
+            data-testid="constraint-modal-ok"
+            autoFocus
+          >
+            GOT IT
+          </button>
+        </div>
       </div>
     </div>
   );

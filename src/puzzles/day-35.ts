@@ -25,21 +25,21 @@ const puzzle: Puzzle = {
       ],
     },
     {
-      theme: 'VMA song of the year winners',
-      tracks: [
-        { id: 270246724, artist: 'TLC', title: 'Waterfalls', note: '' },
-        { id: 1476727670, artist: 'Lady Gaga', title: 'Bad Romance', note: '' },
-        { id: 1479062292, artist: 'Jamiroquai', title: 'Virtual Insanity', note: '' },
-        { id: 1032178989, artist: 'Outkast', title: 'Hey Ya!', note: '' },
-      ],
-    },
-    {
       theme: 'Songs sang by children',
       tracks: [
         { id: 1446924089, artist: 'Musical Youth', title: 'Pass the Dutchie', note: '11 to 15' },
         { id: 170147030, artist: 'Kriss Kross', title: 'Jump', note: '12 and 13' },
         { id: 1440661545, artist: 'Justin Bieber', title: 'Baby', note: '15' },
         { id: 252933316, artist: 'Shirley Temple', title: 'Animal Crackers in My Soup', note: '6' },
+      ],
+    },
+        {
+      theme: 'VMA song of the year winners',
+      tracks: [
+        { id: 270246724, artist: 'TLC', title: 'Waterfalls', note: '' },
+        { id: 1476727670, artist: 'Lady Gaga', title: 'Bad Romance', note: '' },
+        { id: 1479062292, artist: 'Jamiroquai', title: 'Virtual Insanity', note: '' },
+        { id: 1032178989, artist: 'Outkast', title: 'Hey Ya!', note: '' },
       ],
     },
   ],

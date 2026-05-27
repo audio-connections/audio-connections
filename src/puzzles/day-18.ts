@@ -36,8 +36,8 @@ const puzzle: Puzzle = {
     {
       theme: 'Artists who were adopted',
       tracks: [
-        { id: 254344790, artist: 'Run-DMC', title: "It's Tricky" },
-        { id: 1842974732, artist: 'Blondie', title: "Heart of Glass" },
+        { id: 254344790, artist: 'Run-DMC', title: "It's Tricky", note: "Darryl DMC McDaniels" },
+        { id: 1842974732, artist: 'Blondie', title: "Heart of Glass", note: "Debbie Harry" },
         { id: 331985117, artist: 'Faith Hill', title: "Wild One" },
         { id: 388153872, artist: 'Sarah McLachlan', title: "Building a Mystery" },
       ],

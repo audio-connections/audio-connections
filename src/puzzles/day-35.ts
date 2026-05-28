@@ -7,7 +7,7 @@ const puzzle: Puzzle = {
   releaseAt: '2026-06-14T00:00:00Z',
   themes: [
     {
-      theme: 'Song titles that reference the calendar.',
+      theme: 'Song titles that reference the calendar',
       tracks: [
         { id: 1771709877, artist: 'Phoenix', title: '1901', note: 'The Belle Époque Era' },
         { id: 1440839338, artist: 'Sublime', title: 'April 29th, 1992 (Miami)', note: 'LA Riots' },

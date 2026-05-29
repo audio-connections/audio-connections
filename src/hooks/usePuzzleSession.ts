@@ -386,10 +386,14 @@ export function usePuzzleSession(puzzle: Puzzle, options: UsePuzzleSessionOption
     });
 
     (async () => {
-      // Load the measurement module up front (non-mock) so the Phase-2 prefetch
-      // can fire as blobs land and Phase 2.5 can reuse it. Resolves during
-      // Phase 1's network wait; null in mock mode or if the chunk fails to load.
-      const rg = mock ? null : await import('../replaygain/runMeasurement').catch(() => null);
+      // Kick the measurement-module load WITHOUT awaiting, so its chunk
+      // downloads in parallel with the Phase-1 iTunes lookups instead of
+      // serializing in front of them. We await it only where it's first used
+      // (the Phase-2 prefetch / Phase 2.5 apply). null in mock mode or if the
+      // chunk fails to load.
+      const rgPromise = mock
+        ? null
+        : import('../replaygain/runMeasurement').catch(() => null);
 
       const trackInfos: (TrackInfo | null)[] = new Array(all.length).fill(null);
       if (mock) {
@@ -449,6 +453,10 @@ export function usePuzzleSession(puzzle: Puzzle, options: UsePuzzleSessionOption
        *  per day; revoked on day switch by activeBlobUrlsRef below. */
       let cachedCount = 0;
       const total = trackInfos.filter((info): info is TrackInfo => info !== null).length;
+      // Resolve the measurement module now (kicked off before Phase 1, so its
+      // chunk downloaded in parallel). Used by the per-blob prefetch below and
+      // the Phase 2.5 apply.
+      const rg = rgPromise ? await rgPromise : null;
       const blobUrls = await Promise.all(
         trackInfos.map(async (info, i) => {
           if (!info || mock) return null;

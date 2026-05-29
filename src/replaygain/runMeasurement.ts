@@ -25,37 +25,74 @@ function poolSize(): number {
   const cores = nav?.hardwareConcurrency ?? 4;
   const mem = (nav as unknown as { deviceMemory?: number } | undefined)?.deviceMemory;
   let n = Math.min(Math.max(cores - 1, 1), 4);
-  if (typeof mem === 'number' && mem <= 4) n = Math.min(n, 2);
+  // Throttle on low-end devices. deviceMemory is the best signal but is
+  // Chromium-only — undefined on Firefox/Safari (including mobile), the exact
+  // browsers we most want to protect — so also treat a low core count as a
+  // low-end signal. Otherwise those devices would get the full pool, each
+  // worker holding ~11MB of decoded PCM.
+  const lowMemory = typeof mem === 'number' && mem <= 4;
+  const lowCores = cores <= 4;
+  if (lowMemory || lowCores) n = Math.min(n, 2);
   return n;
 }
 const POOL_SIZE = poolSize();
 
-let pool: Worker[] | null = null;
+interface PoolWorker {
+  worker: Worker;
+  /** Set once the worker errors at runtime; dead workers are skipped by
+   *  round-robin and never handed out again. */
+  dead: boolean;
+}
+
+let pool: PoolWorker[] | null = null;
 let poolBroken = false;
 let rr = 0;
 let nextReqId = 1;
-const pending = new Map<number, (r: LoudnessResult | null) => void>();
+// id → resolver. Carries the owning PoolWorker so an 'error' event can fail
+// that worker's in-flight request immediately instead of waiting for the
+// 20s timeout.
+const pending = new Map<number, { resolve: (r: LoudnessResult | null) => void; pw: PoolWorker }>();
 
-function getPoolWorker(): Worker | null {
+function buildPool(): PoolWorker[] {
+  return Array.from({ length: POOL_SIZE }, () => {
+    const w = new Worker(new URL('./measure.worker.ts', import.meta.url), { type: 'module' });
+    const pw: PoolWorker = { worker: w, dead: false };
+    w.addEventListener('message', (e: MessageEvent<MeasureResponse>) => {
+      pending.get(e.data.id)?.resolve(e.data.result);
+    });
+    // A worker that errors at runtime (trap, uncaught throw, message clone
+    // failure) is marked dead so round-robin routes around it, and any request
+    // it was mid-flight is failed now rather than hanging until the timeout.
+    const killWorker = () => {
+      pw.dead = true;
+      for (const [, p] of pending) {
+        if (p.pw === pw) p.resolve(null);
+      }
+    };
+    w.addEventListener('error', killWorker);
+    w.addEventListener('messageerror', killWorker);
+    return pw;
+  });
+}
+
+/** Round-robin a live worker, skipping dead ones. Returns null if the pool
+ *  can't be built or every worker is dead — caller falls back to main thread. */
+function getPoolWorker(): PoolWorker | null {
   if (poolBroken) return null;
   if (!pool) {
     try {
-      pool = Array.from({ length: POOL_SIZE }, () => {
-        const w = new Worker(new URL('./measure.worker.ts', import.meta.url), { type: 'module' });
-        w.addEventListener('message', (e: MessageEvent<MeasureResponse>) => {
-          pending.get(e.data.id)?.(e.data.result);
-        });
-        return w;
-      });
+      pool = buildPool();
     } catch {
       poolBroken = true;
       pool = null;
       return null;
     }
   }
-  const w = pool[rr % pool.length]!;
-  rr++;
-  return w;
+  for (let i = 0; i < pool.length; i++) {
+    const pw = pool[rr++ % pool.length]!;
+    if (!pw.dead) return pw;
+  }
+  return null; // every worker dead → main-thread fallback
 }
 
 // Main-thread wasm, used only when module workers can't be constructed. Decode
@@ -73,33 +110,37 @@ function getMainWasm(): Promise<WasmLoudness | null> {
 const WORKER_TIMEOUT_MS = 20_000;
 
 function measureViaWorker(
-  w: Worker,
+  pw: PoolWorker,
   channels: Float32Array[],
   sampleRate: number,
 ): Promise<LoudnessResult | null> {
   return new Promise((resolve) => {
     const id = nextReqId++;
-    const timer = setTimeout(() => {
-      pending.delete(id);
-      resolve(null);
-    }, WORKER_TIMEOUT_MS);
-    pending.set(id, (r) => {
+    let settled = false;
+    const finish = (r: LoudnessResult | null) => {
+      if (settled) return;
+      settled = true;
       clearTimeout(timer);
       pending.delete(id);
       resolve(r);
-    });
+    };
+    const timer = setTimeout(() => finish(null), WORKER_TIMEOUT_MS);
+    pending.set(id, { resolve: finish, pw });
     try {
       const req: MeasureRequest = { id, sampleRate, channels };
-      w.postMessage(req, channels.map((c) => c.buffer as ArrayBuffer));
+      pw.worker.postMessage(req, channels.map((c) => c.buffer as ArrayBuffer));
     } catch {
-      clearTimeout(timer);
-      pending.delete(id);
-      resolve(null);
+      finish(null);
     }
   });
 }
 
-// Global decode semaphore — the single source of the concurrency/memory bound.
+// Decode semaphore — bounds concurrent decoded-PCM in memory to POOL_SIZE ×
+// ~11MB. The permit covers only the decode + transfer-to-worker, NOT the worker
+// measurement: once the PCM is transferred (detached on the main thread) it no
+// longer counts against our memory budget, so releasing here lets the next
+// decode overlap the current measurement (decode is main-thread, measure is the
+// worker). release() is idempotent per acquire via the caller's `released` flag.
 let activeDecodes = 0;
 const decodeQueue: (() => void)[] = [];
 function acquire(): Promise<void> {
@@ -129,22 +170,42 @@ async function measureBlob(blobUrl: string): Promise<CachedMeasurement | null> {
   const memo = inflight.get(blobUrl);
   if (memo) return memo;
   const p = (async (): Promise<CachedMeasurement | null> => {
+    let released = false;
+    const releaseOnce = () => {
+      if (!released) {
+        released = true;
+        release();
+      }
+    };
     await acquire();
     try {
       const decoded = await decodeToChannels(blobUrl);
       if (!decoded) return null;
-      const w = getPoolWorker();
+      const { channels, sampleRate } = decoded;
+      const pw = getPoolWorker();
       let res: LoudnessResult | null;
-      if (w) {
-        // Channels are transferred to the worker (detached here).
-        res = await measureViaWorker(w, decoded.channels, decoded.sampleRate);
+      if (pw) {
+        // Transfer the PCM to the worker (detached on this thread). The memory
+        // is now the worker's, so free the decode permit before awaiting the
+        // measurement — the next decode can run while this one measures.
+        const measuring = measureViaWorker(pw, channels, sampleRate);
+        releaseOnce();
+        res = await measuring;
+        if (!res) {
+          // Worker failed/timed out and the transferred buffers are gone;
+          // re-decode and measure on the main thread so the track still gets a
+          // gain instead of silently falling back to unity.
+          const reDecoded = await decodeToChannels(blobUrl);
+          const wl = reDecoded ? await getMainWasm() : null;
+          res = wl && reDecoded ? wl.measure(reDecoded.channels, reDecoded.sampleRate) : null;
+        }
       } else {
         const wl = await getMainWasm();
-        res = wl ? wl.measure(decoded.channels, decoded.sampleRate) : null;
+        res = wl ? wl.measure(channels, sampleRate) : null;
       }
       return res ? { integratedLufs: res.integratedLufs, truePeakDbtp: res.truePeakDbtp } : null;
     } finally {
-      release();
+      releaseOnce();
     }
   })();
   inflight.set(blobUrl, p);

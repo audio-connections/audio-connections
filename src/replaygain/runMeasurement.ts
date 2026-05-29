@@ -18,6 +18,26 @@ import { canDecode, decodeToChannels } from './decode';
 import type { LoudnessResult, MeasureRequest, MeasureResponse } from './measure';
 import { WasmLoudness } from './measureWasm';
 
+// ── Profiling (opt-in via ?rgprofile) ───────────────────────────────────────
+// Emits performance.measure() entries (prefixed "rg:") that show up in the
+// DevTools Performance "Timings" lane and are queryable from the console:
+//   performance.getEntriesByType('measure').filter(e => e.name.startsWith('rg:'))
+// Off by default — zero cost in production. `?rgprofile&rgnowarmup` disables the
+// warm-up so you can A/B the cold-start cost in a single session.
+function hasFlag(name: string): boolean {
+  return typeof location !== 'undefined' && new URLSearchParams(location.search).has(name);
+}
+const PROFILE = hasFlag('rgprofile');
+const WARMUP_DISABLED = hasFlag('rgnowarmup');
+function profile(label: string, start: number): void {
+  if (!PROFILE) return;
+  try {
+    performance.measure(`rg:${label}`, { start, end: performance.now() });
+  } catch {
+    /* User Timing L3 unavailable — ignore */
+  }
+}
+
 /** Adaptive parallelism. Memory scales linearly at ~11MB of decoded PCM per
  *  concurrent track, so cap hard on low-RAM devices. */
 function poolSize(): number {
@@ -75,9 +95,8 @@ function buildPool(): PoolWorker[] {
   });
 }
 
-/** Round-robin a live worker, skipping dead ones. Returns null if the pool
- *  can't be built or every worker is dead — caller falls back to main thread. */
-function getPoolWorker(): PoolWorker | null {
+/** Build the pool once (lazily). Returns null if workers can't be constructed. */
+function ensurePool(): PoolWorker[] | null {
   if (poolBroken) return null;
   if (!pool) {
     try {
@@ -88,11 +107,48 @@ function getPoolWorker(): PoolWorker | null {
       return null;
     }
   }
-  for (let i = 0; i < pool.length; i++) {
-    const pw = pool[rr++ % pool.length]!;
+  return pool;
+}
+
+/** Round-robin a live worker, skipping dead ones. Returns null if the pool
+ *  can't be built or every worker is dead — caller falls back to main thread. */
+function getPoolWorker(): PoolWorker | null {
+  const p = ensurePool();
+  if (!p) return null;
+  for (let i = 0; i < p.length; i++) {
+    const pw = p[rr++ % p.length]!;
     if (!pw.dead) return pw;
   }
   return null; // every worker dead → main-thread fallback
+}
+
+/** Pre-spawn the worker pool and pre-compile the wasm inside each worker, so the
+ *  first real measurement doesn't pay worker-spawn + wasm-instantiate latency on
+ *  its critical path. Call during the day load's network wait (Phase 1), before
+ *  any blob lands. Idempotent, best-effort, and a no-op when the environment
+ *  can't decode or when ?rgnowarmup is set (for A/B profiling).
+ *
+ *  Each worker is pinged with a 1-sample throwaway payload: the worker runs
+ *  getWasm() (fetch + instantiateStreaming) on ANY message before inspecting the
+ *  payload, so this forces compilation now. id 0 is never issued by
+ *  measureViaWorker (nextReqId starts at 1), so the reply is ignored. */
+let warmed = false;
+export function warmUp(): void {
+  if (warmed || WARMUP_DISABLED || !canDecode()) return;
+  warmed = true;
+  const t0 = performance.now();
+  const p = ensurePool();
+  if (!p) return;
+  for (const pw of p) {
+    if (pw.dead) continue;
+    try {
+      const ping: MeasureRequest = { id: 0, sampleRate: 48000, channels: [new Float32Array(1)] };
+      pw.worker.postMessage(ping, [ping.channels[0]!.buffer]);
+    } catch {
+      /* best-effort */
+    }
+  }
+  profile('warmup-dispatch', t0);
 }
 
 // Main-thread wasm, used only when module workers can't be constructed. Decode
@@ -179,7 +235,9 @@ async function measureBlob(blobUrl: string): Promise<CachedMeasurement | null> {
     };
     await acquire();
     try {
+      const tDecode = performance.now();
       const decoded = await decodeToChannels(blobUrl);
+      profile('decode', tDecode);
       if (!decoded) return null;
       const { channels, sampleRate } = decoded;
       const pw = getPoolWorker();
@@ -188,9 +246,11 @@ async function measureBlob(blobUrl: string): Promise<CachedMeasurement | null> {
         // Transfer the PCM to the worker (detached on this thread). The memory
         // is now the worker's, so free the decode permit before awaiting the
         // measurement — the next decode can run while this one measures.
+        const tMeasure = performance.now();
         const measuring = measureViaWorker(pw, channels, sampleRate);
         releaseOnce();
         res = await measuring;
+        profile('measure', tMeasure);
         if (!res) {
           // Worker failed/timed out and the transferred buffers are gone;
           // re-decode and measure on the main thread so the track still gets a

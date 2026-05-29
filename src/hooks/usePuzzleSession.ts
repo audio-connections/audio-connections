@@ -394,6 +394,10 @@ export function usePuzzleSession(puzzle: Puzzle, options: UsePuzzleSessionOption
       const rgPromise = mock
         ? null
         : import('../replaygain/runMeasurement').catch(() => null);
+      // Warm the worker pool + wasm compile as soon as the module loads — in
+      // parallel with Phase 1 — so the first measurement doesn't pay
+      // worker-spawn + wasm-instantiate latency once blobs start landing.
+      void rgPromise?.then((m) => m?.warmUp());
 
       const trackInfos: (TrackInfo | null)[] = new Array(all.length).fill(null);
       if (mock) {

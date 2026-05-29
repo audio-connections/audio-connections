@@ -1931,12 +1931,15 @@ h1 {
     overflow: hidden;
   }
 
-  /* Full-bleed shell with stacked rows */
+  /* Full-bleed shell with stacked rows. The --keyboard-inset (set from
+     visualViewport in useKeyboardInset) shrinks the shell to the visible
+     area when the iOS soft keyboard is up, so the sticky bottom chrome
+     pins above the keyboard rather than behind it. Defaults to 0px. */
   .app-shell {
     max-width: none;
     margin: 0;
     padding: 0;
-    height: 100dvh;
+    height: calc(100dvh - var(--keyboard-inset, 0px));
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr auto;

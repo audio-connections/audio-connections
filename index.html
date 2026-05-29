@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <!-- interactive-widget=resizes-content: on browsers that honor it (Chrome
+       Android) the soft keyboard shrinks the layout viewport, so 100dvh and
+       the sticky bottom chrome ride up above it. iOS Safari ignores this and
+       is handled by the visualViewport-driven --keyboard-inset (see App). -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content" />
   <!-- App overwrites this at runtime with the current puzzle's day + author.
        Keep the static fallback generic so it can't drift as puzzles ship. -->
   <title>Audio Connections</title>

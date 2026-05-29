@@ -7,6 +7,7 @@ import { useAudio } from './hooks/useAudio';
 import { useKonami } from './hooks/useKonami';
 import { usePuzzleSession } from './hooks/usePuzzleSession';
 import { useIsMobile, useOrientation } from './hooks/useOrientation';
+import { useKeyboardInset } from './hooks/useKeyboardInset';
 import { DaySelector } from './components/DaySelector';
 import { Countdown } from './components/Countdown';
 import { Grid, type TileShape } from './components/Grid';
@@ -33,6 +34,9 @@ const TILE_SHAPE: TileShape = 'portrait';
 export function App() {
   const orientation = useOrientation();
   const isMobile = useIsMobile();
+  // Publishes --keyboard-inset so the mobile shell shrinks above the iOS
+  // soft keyboard instead of leaving the pinned bottom chrome behind it.
+  useKeyboardInset();
 
   const [currentIndex, setCurrentIndex] = useState(() => {
     const latestIdx = latestReleasedIndex();

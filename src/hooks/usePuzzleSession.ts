@@ -386,6 +386,11 @@ export function usePuzzleSession(puzzle: Puzzle, options: UsePuzzleSessionOption
     });
 
     (async () => {
+      // Load the measurement module up front (non-mock) so the Phase-2 prefetch
+      // can fire as blobs land and Phase 2.5 can reuse it. Resolves during
+      // Phase 1's network wait; null in mock mode or if the chunk fails to load.
+      const rg = mock ? null : await import('../replaygain/runMeasurement').catch(() => null);
+
       const trackInfos: (TrackInfo | null)[] = new Array(all.length).fill(null);
       if (mock) {
         for (let i = 0; i < all.length; i++) trackInfos[i] = { previewUrl: SILENT_WAV };
@@ -445,7 +450,7 @@ export function usePuzzleSession(puzzle: Puzzle, options: UsePuzzleSessionOption
       let cachedCount = 0;
       const total = trackInfos.filter((info): info is TrackInfo => info !== null).length;
       const blobUrls = await Promise.all(
-        trackInfos.map(async (info) => {
+        trackInfos.map(async (info, i) => {
           if (!info || mock) return null;
           const blobUrl = await fetchPreviewBlobUrl(info.previewUrl);
           if (blobUrl && myGen === loadGenRef.current) {
@@ -454,6 +459,11 @@ export function usePuzzleSession(puzzle: Puzzle, options: UsePuzzleSessionOption
               type: 'load-status',
               status: `Caching audio… (${cachedCount}/${total})`,
             });
+            // Kick this track's measurement as soon as its blob lands, so
+            // decode+measure overlaps the remaining fetches and the commit work
+            // instead of running as a post-commit tail. Warms the cache by
+            // iTunes id; bounded by the measurement module's decode semaphore.
+            rg?.prefetchMeasurement(all[i]!.id, blobUrl);
           }
           return blobUrl;
         }),
@@ -518,16 +528,14 @@ export function usePuzzleSession(puzzle: Puzzle, options: UsePuzzleSessionOption
           loadStatus,
         });
       }
-      // Phase 2.5: measure loudness off the main thread and apply per-track
-      // ReplayGain as each result lands. Non-blocking (the grid is already
-      // interactive) and guarded by the load generation so a superseded day's
-      // measurements never paint onto the new one. The grid id maps back to its
-      // iTunes id via all[gridId]. Loaded lazily so the worker/decode machinery
-      // stays out of the unit-test module graph and mock mode (no blobUrls) is
-      // a no-op.
-      void import('../replaygain/runMeasurement').then(({ runReplayGain }) => {
-        if (myGen !== loadGenRef.current) return;
-        runReplayGain(
+      // Phase 2.5: apply per-track ReplayGain. The Phase-2 prefetch has been
+      // measuring as blobs landed, so this mostly resolves from cache and
+      // applies immediately; anything still in flight is shared (no re-decode).
+      // Non-blocking, and load-generation guarded so a superseded day's
+      // measurements never paint onto the new grid. Mock mode (rg === null) is a
+      // no-op.
+      if (rg && myGen === loadGenRef.current) {
+        rg.runReplayGain(
           loaded.map((t) => ({ gridId: t.id, itunesId: all[t.id]!.id, blobUrl: t.blobUrl })),
           {
             isStale: () => myGen !== loadGenRef.current,
@@ -536,7 +544,7 @@ export function usePuzzleSession(puzzle: Puzzle, options: UsePuzzleSessionOption
             },
           },
         );
-      });
+      }
     })();
 
     return () => {

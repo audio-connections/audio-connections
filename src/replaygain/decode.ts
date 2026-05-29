@@ -34,7 +34,11 @@ function getDecoder(): OfflineAudioContext | null {
     return null;
   }
   // A 1-frame context is only ever used as a decoder; decodeAudioData resamples
-  // to its 48 kHz rate, which we then read back off the decoded buffer.
+  // its output to this context's rate. 48 kHz is deliberate, NOT a default to
+  // "fix" to native: Apple previews decode at 88.2/96 kHz, and profiling showed
+  // measuring at native rate is ~2x slower (twice the samples through the
+  // BS.1770 loop) for no accuracy gain — 48 kHz is comfortably above the band
+  // that K-weighting + true-peak care about. Downsampling here is the fast path.
   decoder = new Ctor(1, 1, 48000);
   return decoder;
 }

@@ -17,14 +17,22 @@ wasm-bindgen/wasm-pack glue — the artifact is a plain module the JS loader
 ## Build
 
 ```
-rustup target add wasm32-unknown-unknown   # one time
-npm run wasm:build                          # → src/replaygain/ebur128.wasm
+npm run wasm:build   # → src/replaygain/ebur128.wasm
 ```
 
-`npm run wasm:build` runs `wasm/build.sh`: `cargo build --release --target
-wasm32-unknown-unknown` then copies `ac_ebur128.wasm` to
-`src/replaygain/ebur128.wasm`. The committed `.wasm` means neither CI nor
-`vite build` needs the Rust toolchain — only regenerating it does.
+`npm run wasm:build` runs `wasm/build.sh`, which `cargo build`s inside this
+crate so rustup picks up `rust-toolchain.toml` (pinned channel +
+`wasm32-unknown-unknown` target, auto-installed on first build), then copies
+`ac_ebur128.wasm` to `src/replaygain/ebur128.wasm`. The toolchain pin is what
+makes the rebuild deterministic.
+
+The committed `.wasm` means normal local dev, `vite build`, and the test job
+need no Rust toolchain — only regenerating it does. **The Pages deploy workflow
+rebuilds it from this source** (`.github/workflows/deploy.yml`, build job) so
+the deployed artifact is provably built from the audited Rust, not a trusted
+committed binary; it warns (not fails) if the committed copy has drifted from a
+fresh build. Flip that `echo "::warning::…"` to `exit 1` to make drift a hard
+deploy failure instead.
 
 ## Pinned versions (last built 2026-05-29)
 

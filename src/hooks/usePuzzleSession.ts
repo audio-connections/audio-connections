@@ -159,6 +159,7 @@ export type Action =
   | { type: 'guess-correct-exit-end'; themeIdx: number }
   | { type: 'guess-wrong'; themesPicked: number[]; ids: number[] }
   | { type: 'wrong-game-over-exit-end' }
+  | { type: 'apply-gains'; gains: Map<number, { gainDb: number; truePeakDbtp: number }> }
   | { type: 'reset-puzzle'; tracks: LoadedTrack[] };
 
 function addSig(prev: ReadonlySet<string>, ids: number[]): Set<string> {
@@ -288,6 +289,21 @@ export function reducer(state: SessionState, action: Action): SessionState {
         s === 'exiting' ? 'solved' : s,
       ) as ThemeState[];
       return { ...state, themeStates };
+    }
+
+    case 'apply-gains': {
+      // Paint measured ReplayGain onto the matching tracks, preserving order
+      // and every other field. Ids not present are left untouched, and an
+      // all-no-op map returns the same state so React skips the re-render.
+      if (action.gains.size === 0) return state;
+      let changed = false;
+      const tracks = state.tracks.map((t) => {
+        const g = action.gains.get(t.id);
+        if (!g || (t.gainDb === g.gainDb && t.truePeakDbtp === g.truePeakDbtp)) return t;
+        changed = true;
+        return { ...t, gainDb: g.gainDb, truePeakDbtp: g.truePeakDbtp };
+      });
+      return changed ? { ...state, tracks } : state;
     }
 
     case 'reset-puzzle':
@@ -502,6 +518,25 @@ export function usePuzzleSession(puzzle: Puzzle, options: UsePuzzleSessionOption
           loadStatus,
         });
       }
+      // Phase 2.5: measure loudness off the main thread and apply per-track
+      // ReplayGain as each result lands. Non-blocking (the grid is already
+      // interactive) and guarded by the load generation so a superseded day's
+      // measurements never paint onto the new one. The grid id maps back to its
+      // iTunes id via all[gridId]. Loaded lazily so the worker/decode machinery
+      // stays out of the unit-test module graph and mock mode (no blobUrls) is
+      // a no-op.
+      void import('../replaygain/runMeasurement').then(({ runReplayGain }) => {
+        if (myGen !== loadGenRef.current) return;
+        runReplayGain(
+          loaded.map((t) => ({ gridId: t.id, itunesId: all[t.id]!.id, blobUrl: t.blobUrl })),
+          {
+            isStale: () => myGen !== loadGenRef.current,
+            onGains: (gains) => {
+              if (myGen === loadGenRef.current) dispatch({ type: 'apply-gains', gains });
+            },
+          },
+        );
+      });
     })();
 
     return () => {

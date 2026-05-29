@@ -55,7 +55,6 @@ export function useAudio(tracks: LoadedTrack[]): UseAudio {
   // failure so we never retry and just fall back to raw element playback.
   const audioCtxRef = useRef<AudioContext | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
-  const sourceNodeRef = useRef<MediaElementAudioSourceNode | null>(null);
   const webAudioFailedRef = useRef(false);
 
   const ensureAudio = useCallback((): HTMLAudioElement => {
@@ -135,7 +134,6 @@ export function useAudio(tracks: LoadedTrack[]): UseAudio {
       const gain = ctx.createGain();
       source.connect(gain).connect(ctx.destination);
       audioCtxRef.current = ctx;
-      sourceNodeRef.current = source;
       gainNodeRef.current = gain;
       return gain;
     } catch (e) {
@@ -209,7 +207,6 @@ export function useAudio(tracks: LoadedTrack[]): UseAudio {
         audioCtxRef.current = null;
       }
       gainNodeRef.current = null;
-      sourceNodeRef.current = null;
     };
   }, []);
 

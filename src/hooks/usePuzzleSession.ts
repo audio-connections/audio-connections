@@ -159,7 +159,7 @@ export type Action =
   | { type: 'guess-correct-exit-end'; themeIdx: number }
   | { type: 'guess-wrong'; themesPicked: number[]; ids: number[] }
   | { type: 'wrong-game-over-exit-end' }
-  | { type: 'apply-gains'; gains: Map<number, { gainDb: number; truePeakDbtp: number }> }
+  | { type: 'apply-gains'; gains: Map<number, { gainDb: number }> }
   | { type: 'reset-puzzle'; tracks: LoadedTrack[] };
 
 function addSig(prev: ReadonlySet<string>, ids: number[]): Set<string> {
@@ -299,9 +299,9 @@ export function reducer(state: SessionState, action: Action): SessionState {
       let changed = false;
       const tracks = state.tracks.map((t) => {
         const g = action.gains.get(t.id);
-        if (!g || (t.gainDb === g.gainDb && t.truePeakDbtp === g.truePeakDbtp)) return t;
+        if (!g || t.gainDb === g.gainDb) return t;
         changed = true;
-        return { ...t, gainDb: g.gainDb, truePeakDbtp: g.truePeakDbtp };
+        return { ...t, gainDb: g.gainDb };
       });
       return changed ? { ...state, tracks } : state;
     }

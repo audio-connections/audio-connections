@@ -47,8 +47,6 @@ export interface LoadedTrack {
    *  attenuate). Absent until the track's loudness has been measured, or when
    *  measurement is unavailable — playback uses unity gain (0 dB) then. */
   gainDb?: number;
-  /** Measured true peak in dBTP, retained for debugging/telemetry. */
-  truePeakDbtp?: number;
 }
 
 export interface Guess {

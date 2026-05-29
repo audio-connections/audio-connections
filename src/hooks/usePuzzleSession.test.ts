@@ -249,13 +249,13 @@ describe("reducer 'apply-gains'", () => {
     const s = reducer(freshSession(), {
       type: 'apply-gains',
       gains: new Map([
-        [1, { gainDb: -3.2, truePeakDbtp: -0.5 }],
-        [5, { gainDb: 2.1, truePeakDbtp: -1.0 }],
+        [1, { gainDb: -3.2 }],
+        [5, { gainDb: 2.1 }],
       ]),
     });
     expect(s.tracks.map((t) => t.id)).toEqual([...Array(16).keys()]);
-    expect(s.tracks[1]).toMatchObject({ id: 1, gainDb: -3.2, truePeakDbtp: -0.5 });
-    expect(s.tracks[5]).toMatchObject({ id: 5, gainDb: 2.1, truePeakDbtp: -1.0 });
+    expect(s.tracks[1]).toMatchObject({ id: 1, gainDb: -3.2 });
+    expect(s.tracks[5]).toMatchObject({ id: 5, gainDb: 2.1 });
     expect(s.tracks[0].gainDb).toBeUndefined();
     expect(s.tracks[2].gainDb).toBeUndefined();
   });
@@ -263,7 +263,7 @@ describe("reducer 'apply-gains'", () => {
   it('ignores ids with no matching track', () => {
     const s = reducer(freshSession(), {
       type: 'apply-gains',
-      gains: new Map([[999, { gainDb: 5, truePeakDbtp: -1 }]]),
+      gains: new Map([[999, { gainDb: 5 }]]),
     });
     expect(s.tracks.every((t) => t.gainDb === undefined)).toBe(true);
   });
@@ -273,11 +273,11 @@ describe("reducer 'apply-gains'", () => {
     expect(reducer(base, { type: 'apply-gains', gains: new Map() })).toBe(base);
     const once = reducer(base, {
       type: 'apply-gains',
-      gains: new Map([[0, { gainDb: -1, truePeakDbtp: -1 }]]),
+      gains: new Map([[0, { gainDb: -1 }]]),
     });
     const twice = reducer(once, {
       type: 'apply-gains',
-      gains: new Map([[0, { gainDb: -1, truePeakDbtp: -1 }]]),
+      gains: new Map([[0, { gainDb: -1 }]]),
     });
     expect(twice).toBe(once);
   });
@@ -286,7 +286,7 @@ describe("reducer 'apply-gains'", () => {
     const base = freshSession();
     const s = reducer(base, {
       type: 'apply-gains',
-      gains: new Map([[0, { gainDb: -2, truePeakDbtp: -1 }]]),
+      gains: new Map([[0, { gainDb: -2 }]]),
     });
     expect(s.day).toBe(base.day);
     expect(s.themeStates).toBe(base.themeStates);

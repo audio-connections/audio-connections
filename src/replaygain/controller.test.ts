@@ -27,7 +27,7 @@ describe('measureAndApply', () => {
     );
     expect(measureBlob).not.toHaveBeenCalled();
     expect(onGains).toHaveBeenCalledTimes(1);
-    expect(onGains.mock.calls[0]![0].get(0)).toEqual({ gainDb: computeGainDb(-20, -5), truePeakDbtp: -5 });
+    expect(onGains.mock.calls[0]![0].get(0)).toEqual({ gainDb: computeGainDb(-20, -5) });
   });
 
   it('measures, caches, and applies on a miss', async () => {

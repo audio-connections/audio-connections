@@ -17,7 +17,6 @@ export interface TrackRef {
 
 export interface GainUpdate {
   gainDb: number;
-  truePeakDbtp: number;
 }
 
 export interface MeasureHooks {
@@ -58,6 +57,6 @@ export async function measureAndApply(tracks: TrackRef[], hooks: MeasureHooks): 
     }
     if (!m || hooks.isStale()) return;
     const gainDb = computeGainDb(m.integratedLufs, m.truePeakDbtp, target);
-    hooks.onGains(new Map([[t.gridId, { gainDb, truePeakDbtp: m.truePeakDbtp }]]));
+    hooks.onGains(new Map([[t.gridId, { gainDb }]]));
   });
 }

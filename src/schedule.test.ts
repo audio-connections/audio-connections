@@ -210,7 +210,7 @@ describe('the live schedule resolves the current catalogue correctly', () => {
   // idFromSlug(slug), and it must NEVER change once players can have saved under
   // it. Days 1..22 are released `day-N` files whose keys are the bare numbers
   // '1'..'22' that live saves sit under, so their files must never be renamed.
-  // The reslugged tail (days 23..36, PR5) freezes each author slug as its now-
+  // The reslugged tail (days 23..36) freezes each author slug as its now-
   // permanent key. Renaming any file, reordering the schedule, or shifting a pin
   // breaks this table loudly. Columns: [day, slug, saveKey, date].
   const FROZEN: ReadonlyArray<readonly [number, string, string, string]> = [
@@ -230,9 +230,9 @@ describe('the live schedule resolves the current catalogue correctly', () => {
     [31, 'bojanrajkovic-2', 'bojanrajkovic-2', '2026-06-09'],
     [32, 'klobucar-3', 'klobucar-3', '2026-06-10'],
     [33, 'farana-2', 'farana-2', '2026-06-11'],
-    [34, 'farana-3', 'farana-3', '2026-06-12'], // file day-35 → #34
-    [35, 'tqbf-1', 'tqbf-1', '2026-06-13'], // file day-36 → #35
-    [36, 'tqbf-2', 'tqbf-2', '2026-06-30'], // file day-34 → #36 (held)
+    [34, 'farana-3', 'farana-3', '2026-06-12'],
+    [35, 'tqbf-1', 'tqbf-1', '2026-06-13'],
+    [36, 'tqbf-2', 'tqbf-2', '2026-06-30'], // held pin → dated last
   ];
 
   it('matches the frozen save-key snapshot (day, slug, save key, date)', () => {

@@ -22,7 +22,7 @@ const puzzle: PuzzleContent = {
     {
       theme: 'Psalms and Hymns',
       tracks: [
-        { id: 448055233, artist: 'Hubert Perry (orch. Elgar)', title: 'Jerusalem', note: '' },
+        { id: 448055233, artist: 'Hubert Parry (orch. Elgar)', title: 'Jerusalem', note: '' },
         { id: 895121514, artist: 'Chuck Brown', title: 'Oh Happy Day', note: '' },
         { id: 1628093970, artist: 'Aretha Franklin', title: 'Give Yourself To Jesus', note: '' },
         { id: 261232366, artist: 'Aaron Copland', title: 'Variations on a Shaker Hymn', note: 'Appalachian Spring Suite: VII' },
@@ -32,7 +32,7 @@ const puzzle: PuzzleContent = {
       theme: 'Sampling the Master',
       tracks: [
         { id: 1657705243, artist: 'De La Soul', title: 'Me, Myself, and I', note: 'samples (Not Just) Knee Deep and as a bonus Funky Worm' },
-        { id: 1676677982, artist: 'Dr. Dre', title: 'Let Me Ride', note: 'samples Mothership Connection (Star Child)' },
+        { id: 1668461354, artist: 'Dr. Dre', title: 'Let Me Ride', note: 'samples Mothership Connection (Star Child)' },
         { id: 201275394, artist: 'Beyonce', title: 'Be With You', note: 'samples I\'d Rather Be With You' },
         { id: 423931470, artist: 'Kirk Franklin', title: 'Stomp (Remix)', note: 'samples One Nation Under A Groove' },
       ],

@@ -34,7 +34,7 @@ const puzzle: PuzzleContent = {
         { id: 721299398, artist: 'Bobby Womack', title: 'Daylight', note: '' },
         { id: 306681909, artist: 'J-Kwon', title: 'Tipsy', note: '' },
         { id: 1442959466, artist: 'Montell Jordan', title: 'This Is How We Do It', note: '' },
-        { id: 292766338, artist: 'Shalamar', title: 'A Night To Remember', note: '' },
+        { id: 1737085899, artist: 'Shaboozey', title: 'A Bar Song (Tipsy)', note: '' },
       ],
     },
     {

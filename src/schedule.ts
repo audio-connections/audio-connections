@@ -228,6 +228,8 @@ export const schedule: PinnedScheduleEntry[] = [
   { slug: 'klobucar-5', date: '2026-06-16' },
   { slug: 'bojanrajkovic-5', date: '2026-06-17' },
   { slug: 'klobucar-4', date: '2026-06-18' }, // held (author request): wants this as day 40 in the 6/18 slot
+  { slug: 'klobucar-6', date: '2026-06-19' },
+  { slug: 'robchahin-4', date: '2026-06-20' },
   { slug: 'sjudson-1', date: '2026-06-22' },
   { slug: 'bojanrajkovic-6', date: '2026-06-24' },
   { slug: 'rob-tetrel-2', date: '2026-06-27' },

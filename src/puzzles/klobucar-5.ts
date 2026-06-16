@@ -31,7 +31,7 @@ const puzzle: PuzzleContent = {
       ],
     },
     {
-      theme: 'Dave Grohl played drums',
+      theme: 'Dave Grohl played lots of drums on the albums these came from',
       tracks: [
         { id: 1440759940, artist: 'Queens of the Stone Age', title: 'Go with the Flow', note: 'Songs for the Deaf (2002)' },
         { id: 1440852198, artist: 'Nine Inch Nails', title: 'The Hand That Feeds', note: 'With Teeth (2005)' },

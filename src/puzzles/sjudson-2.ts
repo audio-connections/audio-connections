@@ -41,7 +41,7 @@ const puzzle: PuzzleContent = {
       theme: 'Wait… They’re White???',
       tracks: [
         { id: 1606064876, artist: 'Bobby Caldwell', title: 'What You Won\'t Do for Love', note: '' },
-        { id: 1443225590, artist: 'Teena Marie', title: 'It Must Be Magic', note: '' },
+        { id: 1443225927, artist: 'Teena Marie', title: 'Square Biz', note: '' },
         { id: 1191267548, artist: 'Lisa Stansfield', title: 'All Around The World', note: '' },
         { id: 358568310, artist: 'Michael McDonald', title: 'I Keep Forgetting (Every Time You’re Near)', note: '' },
       ],

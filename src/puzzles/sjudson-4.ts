@@ -42,7 +42,7 @@ const puzzle: PuzzleContent = {
         { id: 780234010, artist: 'Iron Butterfly', title: 'In-A-Gadda-Da-Vida', note: '' },
         { id: 1452440084, artist: 'The Band', title: 'Forbidden Fruit', note: '' },
         { id: 918568442, artist: 'King Crimson', title: 'Exiles', note: '' },
-        { id: 308873908, artist: 'Maxwell', title: 'Ascension', note: '' },
+        { id: 308873908, artist: 'Maxwell', title: 'Ascension', note: 'after the Harrowing of Hell' },
       ],
     },
   ],

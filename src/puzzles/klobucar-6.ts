@@ -42,7 +42,7 @@ const puzzle: PuzzleContent = {
         { id: 1355149519, artist: 'Simple Plan', title: 'I\'m Just a Kid', note: 'Montreal' },
         { id: 1249418627, artist: 'Arcade Fire', title: 'Rebellion (Lies)', note: 'Montreal' },
         { id: 1719975688, artist: 'Men I Trust', title: 'Show Me How', note: 'Montreal' },
-        { id: 1876355939, artist: 'Angine de Poitrine', title: 'Fabienk', note: 'Saguenay' },
+        { id: 1876355944, artist: 'Angine de Poitrine', title: 'Sarniezz', note: 'Saguenay' },
       ],
     },
   ],

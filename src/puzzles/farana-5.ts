@@ -40,7 +40,7 @@ const puzzle: PuzzleContent = {
     {
       theme: "Can you believe it's one guy??",
       tracks: [
-        { id: 850571371, artist: 'Gorillaz', title: 'Feel Good Inc.', note: '' },
+        { id: 850569466, artist: 'Gorillaz', title: 'Rhinestone Eyes', note: '' },
         { id: 1836226730, artist: 'Tame Impala', title: 'Dracula', note: '' },
         { id: 1440783289, artist: 'Owl City', title: 'Fireflies', note: '' },
         { id: 1440852198, artist: 'Nine Inch Nails', title: 'The Hand That Feeds', note: '' },

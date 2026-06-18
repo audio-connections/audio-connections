@@ -396,17 +396,24 @@ describe('previewWarnings', () => {
     // a=05-10, b=05-11, then a pinned jump to 05-20 (8 empty days), then c.
     const s = run(['a', 'b', { slug: 'far', date: '2026-05-20' }], EPOCH);
     // today = 05-10: the 05-11→05-20 gap is in the future → flagged.
-    const future = previewWarnings(s, '2026-05-10', { runway: 1, gapDays: 2 });
+    const future = previewWarnings(s, '2026-05-10', { runway: 1 });
     expect(future.filter((x) => x.kind === 'gap')).toHaveLength(1);
     expect(future.find((x) => x.kind === 'gap')!.message).toMatch(/8 empty day/);
     // today = 05-25: the whole gap is in the past → not flagged.
-    const past = previewWarnings(s, '2026-05-25', { runway: 0, gapDays: 2 });
+    const past = previewWarnings(s, '2026-05-25', { runway: 0 });
     expect(past.filter((x) => x.kind === 'gap')).toHaveLength(0);
+  });
+
+  it('flags one empty day as a gap by default', () => {
+    const s = run([{ slug: 'a', date: '2026-05-10' }, { slug: 'b', date: '2026-05-12' }], EPOCH);
+    const w = previewWarnings(s, '2026-05-10', { runway: 1 });
+    expect(w.filter((x) => x.kind === 'gap')).toHaveLength(1);
+    expect(w.find((x) => x.kind === 'gap')!.message).toMatch(/1 empty day/);
   });
 
   it('does not flag a single-day-apart contiguous run as a gap', () => {
     const s = run(['a', 'b', 'c'], EPOCH);
-    const w = previewWarnings(s, '2026-05-10', { runway: 1, gapDays: 2 });
+    const w = previewWarnings(s, '2026-05-10', { runway: 1 });
     expect(w.filter((x) => x.kind === 'gap')).toHaveLength(0);
   });
 

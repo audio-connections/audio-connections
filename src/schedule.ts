@@ -230,27 +230,27 @@ export const schedule: PinnedScheduleEntry[] = [
   { slug: 'klobucar-4', date: '2026-06-18' }, // held (author request): wants this as day 40 in the 6/18 slot
   { slug: 'klobucar-6', date: '2026-06-19' },
   { slug: 'robchahin-4', date: '2026-06-20' },
+  { slug: 'robchahin-5', date: '2026-06-21' },
   { slug: 'sjudson-1', date: '2026-06-22' },
+  { slug: 'klobucar-7', date: '2026-06-23' },
   { slug: 'bojanrajkovic-6', date: '2026-06-24' },
-  { slug: 'robchahin-5', date: '2026-06-25' },
+  { slug: 'tqbf-5', date: '2026-06-25' },
+  { slug: 'farana-4', date: '2026-06-26' },
   { slug: 'rob-tetrel-2', date: '2026-06-27' },
   { slug: 'tqbf-4', date: '2026-06-28' },
   { slug: 'robchahin-2', date: '2026-06-29' },
   { slug: 'tqbf-2', date: '2026-06-30' }, // held date (author request)
-  { slug: 'sjudson-2', date: '2026-07-01' },
-  { slug: 'klobucar-8', date: '2026-07-02' },
-  { slug: 'tqbf-5', date: '2026-07-03' },
-  { slug: 'farana-5', date: '2026-07-04' },
-  { slug: 'klobucar-7', date: '2026-07-05' },
-  { slug: 'sjudson-4', date: '2026-07-06' },
-  { slug: 'rob-tetrel-3', date: '2026-07-07' },
-  { slug: 'farana-4', date: '2026-07-08' },
-  { slug: 'robchahin-6', date: '2026-07-09' },
-  { slug: 'sjudson-3', date: '2026-07-10' },
-  { slug: 'aschmitz-2', date: '2026-07-11' },
-  { slug: 'thecravenone-1', date: '2026-07-12' },
+  { slug: 'farana-5', date: '2026-07-01' },
+  { slug: 'sjudson-2', date: '2026-07-02' },
+  { slug: 'aschmitz-2', date: '2026-07-03' },
+  { slug: 'rob-tetrel-3', date: '2026-07-04' },
+  { slug: 'sjudson-4', date: '2026-07-05' },
+  { slug: 'robchahin-6', date: '2026-07-06' },
+  { slug: 'thecravenone-1', date: '2026-07-07' },
+  { slug: 'sjudson-3', date: '2026-07-08' },
+  { slug: 'klobucar-8', date: '2026-07-09' },
   { slug: 'bojanrajkovic-4', date: '2026-07-14' }, // held date (author request)
-  { slug: 'aschmitz-1', date: '2026-07-16' },
+  { slug: 'aschmitz-1', date: '2026-07-15' },
 ];
 
 /** Slugs for puzzle files that exist but are not scheduled yet. These are
@@ -339,9 +339,10 @@ export interface ScheduleWarning {
  *  A healthy state is a shallow committed frontier refilled from a deeper
  *  backlog, so a low number here is the prompt to slot more, not an error. */
 export const DEFAULT_RUNWAY = 5;
-/** Default gap threshold: flag a stretch of this many empty calendar days or
- *  more between two consecutive scheduled dates. */
-export const DEFAULT_GAP_DAYS = 2;
+/** Default gap threshold: flag any empty calendar day between consecutive
+ *  scheduled dates. Audio Connections is a daily puzzle, so a single empty day
+ *  is a gap worth surfacing. */
+export const DEFAULT_GAP_DAYS = 1;
 
 export interface PreviewOptions {
   /** Min future puzzles before a thin-runway warning. Default DEFAULT_RUNWAY. */

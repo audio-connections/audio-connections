@@ -37,7 +37,7 @@ const puzzle: PuzzleContent = {
     {
       theme: 'English adaptations of non-English songs',
       tracks: [
-        { id: 1672585478, artist: 'Nena', title: '99 Red Balloons', note: 'German: 99 Luftballons' },
+        { id: 1469581442, artist: 'Stan Getz & Astrud Gilberto', title: 'The Girl from Ipanema', note: 'Portuguese: Garota de Ipanema' },
         { id: 1475517693, artist: 'Frank Sinatra', title: 'My Way', note: "French: Comme d'habitude" },
         { id: 253339563, artist: 'Laura Branigan', title: 'Gloria', note: 'Italian: Gloria' },
         { id: 1564499116, artist: 'Terry Jacks', title: 'Seasons in the Sun', note: 'French: Le Moribond' },

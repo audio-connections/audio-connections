@@ -232,11 +232,25 @@ export const schedule: PinnedScheduleEntry[] = [
   { slug: 'robchahin-4', date: '2026-06-20' },
   { slug: 'sjudson-1', date: '2026-06-22' },
   { slug: 'bojanrajkovic-6', date: '2026-06-24' },
+  { slug: 'robchahin-5', date: '2026-06-25' },
   { slug: 'rob-tetrel-2', date: '2026-06-27' },
   { slug: 'tqbf-4', date: '2026-06-28' },
   { slug: 'robchahin-2', date: '2026-06-29' },
   { slug: 'tqbf-2', date: '2026-06-30' }, // held date (author request)
+  { slug: 'sjudson-2', date: '2026-07-01' },
+  { slug: 'klobucar-8', date: '2026-07-02' },
+  { slug: 'tqbf-5', date: '2026-07-03' },
+  { slug: 'farana-5', date: '2026-07-04' },
+  { slug: 'klobucar-7', date: '2026-07-05' },
+  { slug: 'sjudson-4', date: '2026-07-06' },
+  { slug: 'rob-tetrel-3', date: '2026-07-07' },
+  { slug: 'farana-4', date: '2026-07-08' },
+  { slug: 'robchahin-6', date: '2026-07-09' },
+  { slug: 'sjudson-3', date: '2026-07-10' },
+  { slug: 'aschmitz-2', date: '2026-07-11' },
+  { slug: 'thecravenone-1', date: '2026-07-12' },
   { slug: 'bojanrajkovic-4', date: '2026-07-14' }, // held date (author request)
+  { slug: 'aschmitz-1', date: '2026-07-16' },
 ];
 
 /** Slugs for puzzle files that exist but are not scheduled yet. These are

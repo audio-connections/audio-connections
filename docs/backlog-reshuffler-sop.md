@@ -48,12 +48,18 @@ Range fill is the default high-value mode because it keeps runway healthy. Ranki
 
 Evaluate novelty by calendar distance, not list distance.
 
-- Avoid exact duplicate track ids or same artist/title across the whole schedule unless explicitly intentional.
-- Treat the +/-7 calendar-day window around a candidate date as the strong local novelty window.
-- Treat the +/-21 calendar-day window as the soft local novelty window.
-- Warn when nearby puzzles share obvious category, concept, constraint, or puzzle-shape similarity.
-- Treat exact track repetition as stronger than artist repetition.
-- Treat artist repetition as stronger than broad category-family repetition.
+- Treat obvious category, concept, constraint, or puzzle-shape reuse as the most serious novelty problem because it can spoil the answer space. Avoid category/concept reuse when the two puzzle dates are fewer than 21 calendar days apart.
+- Treat exact duplicate track ids or same normalized artist/title as the next-most serious signal. Avoid exact song reuse when the two puzzle dates are fewer than 14 calendar days apart.
+- Treat artist reuse as the most forgiving signal. Avoid artist reuse when the two puzzle dates are fewer than 7 calendar days apart.
+- Exact threshold distances are acceptable by default: 14 days for songs, 7 days for artists, and 21 days for categories/concepts. Mention edge placements when they are important to the proposal, but do not score them as conflicts unless another signal also applies.
+- A category/concept concern should be meaningful, not just a shared generic word. Prefer human judgment over token overlap for broad words such as "song", "title", "cover", "movie", or "artist".
+- Multiple collisions are more severe than a single collision. Surface combined concerns clearly: for example, a same-category pair with an exact song repeat is worse than either issue alone, and two repeated songs are worse than one repeated song.
+
+Definitions:
+
+- `exact song reuse`: same track id, or the same normalized artist + title even when track ids differ.
+- `artist reuse`: same normalized artist name after trimming punctuation/case and obvious featuring suffixes.
+- `category/concept reuse`: same or strongly overlapping category idea, answer mechanism, constraint, or puzzle shape.
 
 The LLM must inspect and surface novelty concerns across all signals. Static analysis may exist and may produce useful hints, but it is inherently limited. Do not assume a static analyzer has already handled exact track collisions, artist repetition, category overlap, or puzzle-concept similarity.
 
@@ -78,25 +84,53 @@ Use this spoiler-free vocabulary.
 
 Proposal confidence:
 
-- `high`: no hard constraints are violated, no exact song collisions are detected, and any category similarity is weak or outside the strong window.
-- `medium`: the proposal is usable, but one or more placements have soft-window similarity, limited alternatives, or an explainable compromise.
-- `low`: the proposal technically fills the range, but one or more placements have strong local similarity, a near collision, or too little backlog depth to avoid weak novelty.
+- `high`: no hard constraints are violated, no signal-specific novelty thresholds are violated, and any category similarity is weak or at/over the 21-day edge.
+- `medium`: the proposal is usable, but one or more placements have an explainable song, artist, or category compromise, limited alternatives, or a maintainer-approved gap.
+- `low`: the proposal technically fills the range, but one or more placements have a sharp local novelty conflict or too little backlog/date depth to avoid weak novelty.
 
 Conflict severity:
 
 - `blocker`: violates a hard constraint, such as moving a released day, duplicating a slug, scheduling a missing slug, or creating an unrequested two-per-day placement.
-- `high`: no hard constraint is broken, but there is an exact or near-exact song/artist collision, or a strong category similarity inside the 7-day window.
-- `medium`: category or artist similarity appears in the 21-day soft window, or a placement is acceptable only because a held date or thin backlog limits alternatives.
-- `low`: mild thematic resemblance or weak repetition that should be noted but does not need action.
+- `high`: no hard constraint is broken, but there is category/concept reuse fewer than 21 days apart, especially when song reuse also appears; or there are multiple song repeats fewer than 14 days apart.
+- `medium`: exact song reuse fewer than 14 days apart, multiple artist repeats fewer than 7 days apart, or a placement acceptable only because held dates, a thin backlog, or approved gaps limit alternatives.
+- `low`: a single artist repeat fewer than 7 days apart, edge-threshold placement, mild thematic resemblance, or weak repetition that should be noted but does not need action.
 
 Spoiler-free example:
 
 ```text
 overall confidence: high
-2026-06-15 example-1: high confidence; no exact song collision; no strong-window category concern.
-2026-06-16 example-2: medium confidence; medium category-similarity warning in the soft window; alternate available on 2026-06-18.
-2026-06-17 example-3: low confidence; high local novelty warning. Ask for details before applying.
+2026-06-15 example-1: high confidence; no category <21d, song <14d, or artist <7d concern.
+2026-06-16 example-2: medium confidence; exact song repeat inside 14 days; alternate available on 2026-06-18.
+2026-06-17 example-3: low confidence; category/concept reuse inside 21 days. Ask for details before applying.
 ```
+
+## Scheduling Mechanics
+
+Do not wing the reshuffle. Use a repeatable process and report the compromises.
+
+1. Build the candidate date set from the requested range, existing future dates, and any maintainer-approved gaps. Preserve held dates and their comments as fixed rows.
+2. Build the candidate slug set from the requested backlog scope. Do not silently drop a backlog slug unless the maintainer asked for a partial fill.
+3. Extract metadata for every fixed and candidate puzzle once: slug, author, constraint, category labels, track ids, normalized artist/title keys, normalized artists, and track notes.
+4. Precompute pairwise novelty signals for every candidate/fixed and candidate/candidate date pairing. Cache these results for the run so scoring does not repeatedly parse files.
+5. Score proposals lexicographically, in this order:
+   - hard-constraint violations
+   - category/concept reuse fewer than 21 days apart, counting both number of affected pairs and number of overlapping concepts
+   - exact song reuse fewer than 14 days apart, counting both number of affected pairs and number of repeated songs
+   - artist reuse fewer than 7 days apart, counting both number of affected pairs and number of repeated artists
+   - unapproved calendar gaps inside the requested fill range
+   - approved but noteworthy gaps, edge-threshold placements, and other mild variety notes
+6. Prefer a natural daily cadence for a daily puzzle. Leaving holes is allowed only when the maintainer requested or accepted them, and should be called out.
+7. For small searches, evaluate all permutations when feasible. For larger searches, start from a deterministic baseline (sorted slugs over sorted dates), then use deterministic greedy insertion plus pairwise swaps until no swap improves the lexicographic score. If randomized local search is used as a helper, run it only after the deterministic pass and report that it was used.
+8. Compare the proposed order against the current order or a naive chronological fill. The output should explain whether the reshuffle materially improves the top concerns.
+9. When the best available proposal still has novelty conflicts, prefer surfacing the few sharpest conflicts over hiding them in an aggregate score.
+
+Performance guidance:
+
+- Exhaustively evaluate permutations only for 8 or fewer candidate puzzles. For 9 or more candidate puzzles, use deterministic greedy insertion plus pairwise swaps; if needed, add a bounded local search over the best deterministic result.
+- Use pairwise scoring caches keyed by `slug@date`.
+- Keep exact-song detection cheap and deterministic: compare track ids and normalized artist/title keys.
+- Use token/category matching as a hint only; the final category/concept concern should be judged from the actual labels, constraints, and notes.
+- If the run is cut short, say so and present the best deterministic result, not an unqualified optimum.
 
 ## Proposal Output
 
@@ -122,13 +156,13 @@ Use this row style:
 Spoiler-free rationale should avoid specifics:
 
 ```text
-2026-06-15 example-1: high confidence; no exact song collision; weak category similarity risk in the soft window.
+2026-06-15 example-1: high confidence; no category <21d, song <14d, or artist <7d concern.
 ```
 
 Spoiler-free warnings should be actionable without revealing content:
 
 ```text
-warning: example-2 on 2026-06-16 has a medium category-similarity conflict with a puzzle one day earlier. Ask for details or choose the alternate 2026-06-18 placement.
+warning: example-2 on 2026-06-16 has a medium category/concept conflict inside 21 days. Ask for details or choose the alternate 2026-06-18 placement.
 rework: example-3 needs author follow-up before scheduling; contact Ada Example.
 ```
 

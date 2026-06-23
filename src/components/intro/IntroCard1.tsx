@@ -86,8 +86,6 @@ export function IntroCard1({ playKey, variant }: IntroCard1Props) {
       </h2>
       <p className="intro-byline">
         A <em>&ldquo;match&nbsp;4&rdquo;</em> music trivia game
-        {isDesktop ? ' ' : <br />}
-        by Corey Farwell and friends
       </p>
     </div>
   );

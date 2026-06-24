@@ -4,20 +4,11 @@ const puzzle: PuzzleContent = {
   author: 'Justin Engler',
   themes: [
     {
-      theme: 'A Single Trumpet',
-      tracks: [
-        { id: 1632569208, artist: 'Cake', title: "The Distance" },
-        { id: 1321155903 , artist: 'Tears for Fears', title: "West End Girls" },
-        { id: 840381890, artist: 'Jason Derulo', title: "Talk Dirty" },
-        { id: 304756750, artist: 'Groove Armada', title: "At the River" },
-      ],
-    },
-    {
       theme: 'Iconic Percussion',
       tracks: [
-          { id: 1076779225, artist: 'Phil Collins', title: "In the Air Tonight", note: 'Most iconic "Gated Reverb" example' },
-          { id: 580708184, artist: 'Led Zepplin', title: "When the Levee Breaks", note: 'Recorded in a three story foyer to catch the reverb' },
-          { id: 541340715, artist: 'The Winstons', title: "Amen Brother'", note: 'Drum break is the origin of the Jungle/Drum and Bass genre'  },
+          { id: 1076779225, artist: 'Phil Collins', title: "In the Air Tonight", note: 'Most iconic "Gated Reverb" example in the break' },
+          { id: 580708184, artist: 'Led Zeppelin', title: "When the Levee Breaks", note: 'Recorded in a three story foyer to catch the reverb' },
+          { id: 541340715, artist: 'The Winstons', title: "Amen, Brother'", note: 'Drum break is the origin of the Drum and Bass/Jungle genre'  },
           { id: 1440651216, artist: "Queen", title: "We Will Rock You" },
       ],
     },
@@ -28,6 +19,15 @@ const puzzle: PuzzleContent = {
           { id: 3654442, artist: 'Tori Amos', title: "Cornflake Girl" },
           { id: 1440883284, artist: 'The Police', title: "Every Little Thing She Does is Magic" },
           { id: 1148642452, artist: 'Phil Collins', title: "Against All Odds" },
+      ],
+    },
+    {
+      theme: 'Trumpet is the only brass instrument',
+      tracks: [
+        { id: 1632569208, artist: 'Cake', title: "The Distance" },
+        { id: 1321155903 , artist: 'Pet Shop Boys', title: "West End Girls" },
+        { id: 992222005, artist: 'Muse', title: "Knights of Cydonia" },
+        { id: 304756750, artist: 'Groove Armada', title: "At the River" },
       ],
     },
     {

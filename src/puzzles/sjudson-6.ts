@@ -42,7 +42,7 @@ const puzzle: PuzzleContent = {
       tracks: [
         { id: 1494712784, artist: 'Elaine Stritch', title: 'I\'m Still Here', note: 'from Follies' },
         { id: 1450647832, artist: 'Patti LuPone', title: 'The Ladies Who Lunch', note: 'from Company' },
-        { id: 0, artist: 'Audra McDonald', title: 'The Glamorous Life', note: 'from A Little Night Music' },
+        { id: 646591971, artist: 'Audra McDonald', title: 'The Glamorous Life', note: 'from A Little Night Music' },
         { id: 219251308, artist: 'Bernadette Peters', title: 'Not A Day Goes By', note: 'from Merrily We Roll Along' },
       ],
     },

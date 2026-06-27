@@ -24,19 +24,19 @@ const puzzle: PuzzleContent = {
     {
       theme: 'Terrible Wedding Songs',
       tracks: [
-        { id: 1440674160, artist: 'The Police', title: 'Every Breath You Take', note: 'A song about jealous surveillance, not devotion.' },
-        { id: 1443184298, artist: 'U2', title: 'Pride (In the Name of Love)', note: 'About the assassination of Dr. King.' },
-        { id: 1440850621, artist: 'R.E.M.', title: 'The One I Love', note: "“A simple prop to occupy my time” — it's a kiss-off, not a love song." },
-        { id: 121052337, artist: 'Stephen Stills', title: "Love the One You're With", note: 'An anthem for infidelity.' },
+        { id: 1440674160, artist: 'The Police', title: 'Every Breath You Take', note: 'Stalking.' },
+        { id: 1443184298, artist: 'U2', title: 'Pride (In the Name of Love)', note: 'MLK.' },
+        { id: 1440850621, artist: 'R.E.M.', title: 'The One I Love', note: "Disdain." },
+        { id: 121052337, artist: 'Stephen Stills', title: "Love the One You're With", note: 'Cheating.' },
       ],
     },
     {
-      theme: 'Sleeper Anti-Right-Wing Songs',
+      theme: 'Unexpectedly Anti-Right-Wing',
       tracks: [
-        { id: 1446013598, artist: 'Nena', title: '99 Luftballons', note: 'A Cold War protest about nuclear-war paranoia.' },
-        { id: 1716567638, artist: 'Eddy Grant', title: 'Electric Avenue', note: 'Written about the 1981 Brixton riots and racism.' },
-        { id: 847943125, artist: 'Ramones', title: 'Bonzo Goes to Bitburg', note: "Joey Ramone's rebuke of Reagan's visit to a cemetery holding SS graves." },
-        { id: 725282420, artist: 'Red Rider', title: 'Lunatic Fringe', note: 'Written in response to resurgent antisemitism.' },
+        { id: 1446013598, artist: 'Nena', title: '99 Luftballons' },
+        { id: 1716567638, artist: 'Eddy Grant', title: 'Electric Avenue' },
+        { id: 847943125, artist: 'Ramones', title: 'Bonzo Goes to Bitburg' },
+        { id: 725282420, artist: 'Red Rider', title: 'Lunatic Fringe' },
       ],
     },
   ],

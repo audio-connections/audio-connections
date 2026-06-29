@@ -4,6 +4,15 @@ const puzzle: PuzzleContent = {
   author: 'Thomas Ptacek',
   themes: [
     {
+      theme: 'Visionary',
+      tracks: [
+        { id: 217273922, artist: 'Johnny Nash', title: 'I Can See Clearly Now' },
+        { id: 1550183926, artist: 'The Who', title: 'I Can See for Miles' },
+        { id: 959563981, artist: 'Ace of Base', title: 'The Sign' },
+        { id: 300981123, artist: 'Wilco', title: 'Kamera' },
+      ],
+    },
+    {
       theme: 'Tracks With Extended Outros',
       tracks: [
         { id: 1440663520, artist: 'Derek & The Dominos', title: 'Layla' },
@@ -19,15 +28,6 @@ const puzzle: PuzzleContent = {
         { id: 913902278, artist: 'Boston', title: 'Foreplay / Long Time' },
         { id: 256310684, artist: 'Vanilla Fudge', title: "You Keep Me Hangin' On" },
         { id: 1440830911, artist: 'Heart', title: 'Crazy On You' },
-      ],
-    },
-    {
-      theme: 'Two Songs, One Track',
-      tracks: [
-        { id: 1440863114, artist: 'Elton John', title: 'Funeral for a Friend / Love Lies Bleeding', note: 'An instrumental that segues straight into a separate rock song.' },
-        { id: 321974250, artist: 'Crosby, Stills, Nash & Young', title: 'Carry On', note: "Folds the earlier Stills song 'Questions' into its second half." },
-        { id: 1441165168, artist: 'The Beatles', title: 'A Day in the Life', note: 'Two unfinished fragments — Lennon’s and McCartney’s — spliced into one.' },
-        { id: 1467438670, artist: 'Simon & Garfunkel', title: 'Scarborough Fair / Canticle', note: "A traditional ballad with a separate antiwar 'Canticle' woven over it." },
       ],
     },
     {

@@ -34,7 +34,7 @@ const puzzle: PuzzleContent = {
       theme: 'Songs their performers soured on',
       tracks: [
         { id: 1517447333, artist: 'Oasis', title: 'Wonderwall', note: 'Liam Gallagher said singing it made him want to gag' },
-        { id: 1679849823, artist: 'Radiohead', title: 'Creep', note: 'Thom Yorke dismissed it as "crap"; the band shelved it for years' },
+        { id: 1097862231, artist: 'Radiohead', title: 'Creep', note: 'Thom Yorke dismissed it as "crap"; the band shelved it for years' },
         { id: 580708180, artist: 'Led Zeppelin', title: 'Stairway to Heaven', note: 'Robert Plant has long been tired of performing it' },
         { id: 1440912353, artist: 'Beastie Boys', title: 'Fight for Your Right', note: 'They disliked how its parody became a frat anthem' },
       ],

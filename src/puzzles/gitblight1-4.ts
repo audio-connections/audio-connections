@@ -37,7 +37,7 @@ const puzzle: PuzzleContent = {
         { id: 1456623340, artist: 'Earth, Wind & Fire', title: 'September', note: 'Spotify Singles (2018)' },
         { id: 724363409, artist: 'Kim Carnes', title: 'Bette Davis Eyes', note: 'Speak Now World Tour Live album (2011)' },
         { id: 1088545747, artist: 'Phil Collins', title: "Can't Stop Loving You", note: 'BBC Radio 1 Live Lounge (2019)' },
-        { id: 1441154437, artist: 'Rihanna', title: 'Umbrella (feat. Jay-Z)', note: 'Fearless Tour (2009–10)' },
+        { id: 1441154437, artist: 'Rihanna', title: 'Umbrella (feat. Jay-Z)', note: 'Live From Soho (2007)' },
       ],
     },
   ],

@@ -1,14 +1,18 @@
 #!/usr/bin/env node
-// Generates tests/helpers/preview_check.html from src/puzzles/day-*.ts.
-// Embeds only the days you ask for so an open browser tab can't spoil a day
-// you didn't pick. Re-run whenever puzzle files (or your day selection)
-// change. No npm/node_modules required — uses regex + Function() to pluck
-// the puzzle object literal out of each TS file.
+// Generates tests/helpers/preview_check.html from src/puzzles/<slug>.ts.
+// Embeds only the puzzles you ask for so an open browser tab can't spoil one
+// you didn't pick. Re-run whenever puzzle files (or your selection) change.
+// No npm/node_modules required — uses regex + Function() to pluck the puzzle
+// object literal out of each TS file.
+//
+// Puzzle files carry content only (author/constraint/themes) — no `day`;
+// day numbers are derived elsewhere from src/schedule.ts. So selection here
+// is by filename slug (the file stem), not day number.
 //
 // Usage:
-//   node tests/helpers/build_preview.mjs 32 33     # just those days
-//   node tests/helpers/build_preview.mjs 30-33     # range
-//   node tests/helpers/build_preview.mjs           # ALL days (use with care)
+//   node tests/helpers/build_preview.mjs gitblight1-4        # just that one
+//   node tests/helpers/build_preview.mjs day-1 robchahin-3   # a few, by slug
+//   node tests/helpers/build_preview.mjs                     # ALL puzzles (use with care)
 //   node tests/helpers/build_preview.mjs --help
 
 import fs from 'node:fs';
@@ -20,58 +24,54 @@ const repoRoot = path.resolve(__dirname, '../..');
 const puzzleDir = path.join(repoRoot, 'src/puzzles');
 const outPath = path.join(__dirname, 'preview_check.html');
 
+// Real puzzle slugs are always <name>-<number> (day-1, gitblight1-4,
+// rob-tetrel-2, ...). Stricter than the SLUG_FILE_RE in
+// src/puzzles.data.test.ts / scripts/schedule-preview.ts on purpose: this
+// keeps stray non-puzzle files sitting in src/puzzles/ (e.g. a scratch
+// backup.ts with no trailing number) out of "all puzzles" mode.
+const PUZZLE_FILE_RE = /^[a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*-\d+\.ts$/;
+
 const args = process.argv.slice(2);
 if (args.includes('--help') || args.includes('-h')) {
-  console.log('Usage: node tests/helpers/build_preview.mjs [day|range ...]');
-  console.log('  e.g.  node tests/helpers/build_preview.mjs 32 33');
-  console.log('        node tests/helpers/build_preview.mjs 30-33');
-  console.log('        node tests/helpers/build_preview.mjs        (all days)');
+  console.log('Usage: node tests/helpers/build_preview.mjs [slug ...]');
+  console.log('  e.g.  node tests/helpers/build_preview.mjs gitblight1-4');
+  console.log('        node tests/helpers/build_preview.mjs day-1 robchahin-3');
+  console.log('        node tests/helpers/build_preview.mjs        (all puzzles)');
   process.exit(0);
 }
 
-let dayFilter = null;
-if (args.length) {
-  dayFilter = new Set();
-  for (const arg of args) {
-    const range = arg.match(/^(\d+)-(\d+)$/);
-    if (range) {
-      const lo = +range[1], hi = +range[2];
-      for (let i = lo; i <= hi; i++) dayFilter.add(i);
-    } else if (/^\d+$/.test(arg)) {
-      dayFilter.add(+arg);
-    } else {
-      console.error(`Bad day arg: ${arg} (expected N or N-M)`);
-      process.exit(1);
-    }
-  }
-}
+const slugFilter = args.length ? new Set(args) : null;
 
 function parsePuzzle(file) {
   const text = fs.readFileSync(file, 'utf8');
+  // Puzzle files declare `const puzzle: PuzzleContent = {...}` (legacy
+  // day-N.ts files may still say `: Puzzle`) — match either annotation.
   const m = text.match(
-    /const puzzle:\s*Puzzle\s*=\s*(\{[\s\S]*?\});\s*[\r\n]+\s*export default puzzle/,
+    /const puzzle:\s*\w+\s*=\s*(\{[\s\S]*?\});\s*[\r\n]+\s*export default puzzle/,
   );
   if (!m) throw new Error(`Could not parse puzzle object in ${file}`);
   // Puzzle files use JS object-literal syntax (single quotes, trailing commas,
   // unquoted keys). new Function() handles it directly — no JSON conversion.
-  return new Function(`return ${m[1]}`)();
+  const content = new Function(`return ${m[1]}`)();
+  content.slug = path.basename(file, '.ts');
+  return content;
 }
 
 const files = fs
   .readdirSync(puzzleDir)
-  .filter((f) => /^day-\d+\.ts$/.test(f))
+  .filter((f) => f !== 'template.ts' && PUZZLE_FILE_RE.test(f))
   .map((f) => path.join(puzzleDir, f));
 
-const allPuzzles = files.map(parsePuzzle).sort((a, b) => a.day - b.day);
-const puzzles = dayFilter
-  ? allPuzzles.filter((p) => dayFilter.has(p.day))
+const allPuzzles = files.map(parsePuzzle).sort((a, b) => a.slug.localeCompare(b.slug));
+const puzzles = slugFilter
+  ? allPuzzles.filter((p) => slugFilter.has(p.slug))
   : allPuzzles;
 
-if (dayFilter) {
-  const found = new Set(puzzles.map((p) => p.day));
-  const missing = [...dayFilter].filter((d) => !found.has(d));
+if (slugFilter) {
+  const found = new Set(puzzles.map((p) => p.slug));
+  const missing = [...slugFilter].filter((s) => !found.has(s));
   if (missing.length) {
-    console.error(`No puzzle file(s) found for day(s): ${missing.join(', ')}`);
+    console.error(`No puzzle file(s) found for slug(s): ${missing.join(', ')}`);
     process.exit(1);
   }
 }
@@ -112,7 +112,7 @@ const html = `<!doctype html>
   Each preview loads its <code>previewUrl</code> from iTunes via JSONP (same path
   the app uses). Titles start hidden — play, try to identify, then click
   <em>Reveal</em>. Selection persists in the URL hash (e.g.
-  <code>#days=32,33</code>) so you can bookmark or reload a configuration.
+  <code>#puzzles=gitblight1-4,day-1</code>) so you can bookmark or reload a configuration.
 </p>
 <div class="toolbar">
   <div class="days-row" id="dayPicker"></div>
@@ -129,52 +129,53 @@ const html = `<!doctype html>
 <script>
 const DATA = ${dataJson};
 
-const dayByNum = new Map(DATA.map((p) => [p.day, p]));
+const bySlug = new Map(DATA.map((p) => [p.slug, p]));
 
 function readSelection() {
   const hash = location.hash.replace(/^#/, '');
-  const raw = new URLSearchParams(hash).get('days');
+  const raw = new URLSearchParams(hash).get('puzzles');
   if (!raw) {
-    // Default to the most recent day — usually the one being authored.
-    return DATA.length ? new Set([DATA[DATA.length - 1].day]) : new Set();
+    // No selection recorded yet — default to everything that was embedded
+    // (usually just what you asked for on the command line).
+    return new Set(DATA.map((p) => p.slug));
   }
-  return new Set(raw.split(',').map(Number).filter((n) => dayByNum.has(n)));
+  return new Set(raw.split(',').filter((s) => bySlug.has(s)));
 }
 
 function writeSelection(set) {
-  const days = [...set].sort((a, b) => a - b);
-  location.hash = days.length ? 'days=' + days.join(',') : '';
+  const slugs = [...set].sort();
+  location.hash = slugs.length ? 'puzzles=' + slugs.join(',') : '';
 }
 
 const picker = document.getElementById('dayPicker');
-const cbByDay = new Map();
+const cbBySlug = new Map();
 const dayLabel = document.createElement('span');
 dayLabel.className = 'label';
-dayLabel.textContent = 'Days:';
+dayLabel.textContent = 'Puzzles:';
 picker.appendChild(dayLabel);
 
 for (const puzzle of DATA) {
   const wrap = document.createElement('label');
   const cb = document.createElement('input');
   cb.type = 'checkbox';
-  cb.value = String(puzzle.day);
+  cb.value = puzzle.slug;
   cb.addEventListener('change', () => {
     const set = new Set();
-    for (const [day, box] of cbByDay) if (box.checked) set.add(day);
+    for (const [slug, box] of cbBySlug) if (box.checked) set.add(slug);
     writeSelection(set);
   });
   wrap.appendChild(cb);
-  wrap.appendChild(document.createTextNode(' ' + puzzle.day));
+  wrap.appendChild(document.createTextNode(' ' + puzzle.slug));
   picker.appendChild(wrap);
-  cbByDay.set(puzzle.day, cb);
+  cbBySlug.set(puzzle.slug, cb);
 }
 
 function syncCheckboxes(set) {
-  for (const [day, cb] of cbByDay) cb.checked = set.has(day);
+  for (const [slug, cb] of cbBySlug) cb.checked = set.has(slug);
 }
 
 document.getElementById('selectAll').addEventListener('click', () => {
-  writeSelection(new Set(DATA.map((p) => p.day)));
+  writeSelection(new Set(DATA.map((p) => p.slug)));
 });
 document.getElementById('clearDays').addEventListener('click', () => writeSelection(new Set()));
 
@@ -218,18 +219,25 @@ async function render(set) {
   const myToken = ++renderToken;
   content.innerHTML = '';
   activeCards = [];
-  const selectedDays = DATA.filter((p) => set.has(p.day));
-  if (!selectedDays.length) {
-    content.innerHTML = '<p class="label">No days selected — check one above.</p>';
+  const selectedPuzzles = DATA.filter((p) => set.has(p.slug));
+  if (!selectedPuzzles.length) {
+    content.innerHTML = '<p class="label">No puzzles selected — check one above.</p>';
     statusEl.textContent = '';
     return;
   }
 
   const cardsToLoad = [];
-  for (const puzzle of selectedDays) {
+  for (const puzzle of selectedPuzzles) {
     const h2 = document.createElement('h2');
-    h2.textContent = 'Day ' + puzzle.day;
+    h2.textContent = puzzle.slug;
     content.appendChild(h2);
+    if (puzzle.constraint) {
+      const constraintEl = document.createElement('p');
+      constraintEl.className = 'label';
+      constraintEl.style.fontStyle = 'italic';
+      constraintEl.textContent = 'Constraint: “' + puzzle.constraint + '”';
+      content.appendChild(constraintEl);
+    }
     puzzle.themes.forEach((theme, themeIdx) => {
       const h3 = document.createElement('h3');
       h3.textContent = 'Theme ' + (themeIdx + 1) + ': ' + theme.theme;
@@ -240,7 +248,7 @@ async function render(set) {
       theme.tracks.forEach((track, trackIdx) => {
         const card = document.createElement('div');
         card.className = 'card';
-        const label = 'Day ' + puzzle.day + ' · T' + (themeIdx + 1) +
+        const label = puzzle.slug + ' · T' + (themeIdx + 1) +
           ' · Track ' + (trackIdx + 1);
         card.innerHTML =
           '<div class="label">' + label + ' <span class="label" style="float:right">id ' + track.id + '</span></div>' +
@@ -299,5 +307,5 @@ reactToHash();
 `;
 
 fs.writeFileSync(outPath, html);
-const days = puzzles.map((p) => p.day).join(', ');
-console.log(`Wrote ${path.relative(repoRoot, outPath)} (${puzzles.length} days: ${days})`);
+const slugs = puzzles.map((p) => p.slug).join(', ');
+console.log(`Wrote ${path.relative(repoRoot, outPath)} (${puzzles.length} puzzle(s): ${slugs})`);

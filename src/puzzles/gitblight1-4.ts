@@ -32,7 +32,7 @@ const puzzle: PuzzleContent = {
       ],
     },
     {
-      theme: "Covered live by Taylor Swift",
+      theme: "Covered by Taylor Swift",
       tracks: [
         { id: 1456623340, artist: 'Earth, Wind & Fire', title: 'September', note: 'Spotify Singles (2018)' },
         { id: 724363409, artist: 'Kim Carnes', title: 'Bette Davis Eyes', note: 'Speak Now World Tour Live album (2011)' },

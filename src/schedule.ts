@@ -244,11 +244,12 @@ export const schedule: PinnedScheduleEntry[] = [
   { slug: 'sjudson-2', date: '2026-07-02' },
   { slug: 'aschmitz-2', date: '2026-07-03' },
   { slug: 'rob-tetrel-3', date: '2026-07-04' },
-  { slug: 'sjudson-4', date: '2026-07-05' },
-  { slug: 'robchahin-6', date: '2026-07-06' },
-  { slug: 'thecravenone-1', date: '2026-07-07' },
-  { slug: 'sjudson-3', date: '2026-07-08' },
-  { slug: 'klobucar-8', date: '2026-07-09' },
+  { slug: 'gitblight1-4', date: '2026-07-05' },
+  { slug: 'sjudson-4', date: '2026-07-06' },
+  { slug: 'robchahin-6', date: '2026-07-07' },
+  { slug: 'thecravenone-1', date: '2026-07-08' },
+  { slug: 'sjudson-3', date: '2026-07-09' },
+  { slug: 'klobucar-8', date: '2026-07-10' },
   { slug: 'bojanrajkovic-4', date: '2026-07-14' }, // held date (author request)
   { slug: 'aschmitz-1', date: '2026-07-15' },
 ];

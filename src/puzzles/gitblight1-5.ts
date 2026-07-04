@@ -8,7 +8,7 @@ const puzzle: PuzzleContent = {
       theme: 'Patter songs',
       tracks: [
         { id: 1442948604, artist: 'Robert Preston', title: 'Ya Got Trouble', note: "The Music Man — the con man's rapid-fire sell" },
-        { id: 1707958767, artist: 'Only Murders in the Building – Cast', title: 'Which of the Pickwick Triplets Did It?', note: '"Death Rattle Dazzle" (Only Murders in the Building) — a Sondheim-style whodunit patter number' },
+        { id: 1707958767, artist: 'Steve Martin', title: 'Which of the Pickwick Triplets Did It?', note: '"Death Rattle Dazzle" (Only Murders in the Building) — a Sondheim-style whodunit patter number' },
         { id: 1025212468, artist: 'Original Broadway Cast of Hamilton', title: 'Guns and Ships', note: "Hamilton — Lafayette's rapid-fire verse (Daveed Diggs)" },
         { id: 797527613, artist: 'The Pirates of Penzance', title: 'I Am the Very Model of a Modern Major-General', note: 'The Pirates of Penzance (Gilbert & Sullivan) — the ur-patter song' },
       ],

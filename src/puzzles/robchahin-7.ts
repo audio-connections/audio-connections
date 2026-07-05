@@ -4,12 +4,12 @@ const puzzle: PuzzleContent = {
   author: 'Rob Chahin',
   themes: [
     {
-      theme: 'Eponymous songs',
+      theme: 'Songs about dance floors',
       tracks: [
-        { id: 697203109, artist: 'Talk Talk', title: 'Talk Talk' },
-        { id: 4512384, artist: 'The Monkees', title: 'The Monkees' },
-        { id: 787645012, artist: 'Black Sabbath', title: 'Black Sabbath' },
-        { id: 978942755, artist: 'Bad Company', title: 'Bad Company' },
+        { id: 1425259944, artist: 'Michael Sembello', title: 'Maniac' },
+        { id: 1443920952, artist: 'Sophie Ellis-Bextor', title: 'Murder On The Dancefloor' },
+        { id: 111153391, artist: 'Arctic Monkeys', title: 'I Bet You Look Good on the Dancefloor' },
+        { id: 193015409, artist: 'Michael Jackson', title: 'Blood on the Dance Floor' },
       ],
     },
     {

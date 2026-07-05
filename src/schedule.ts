@@ -244,14 +244,26 @@ export const schedule: PinnedScheduleEntry[] = [
   { slug: 'sjudson-2', date: '2026-07-02' },
   { slug: 'aschmitz-2', date: '2026-07-03' },
   { slug: 'rob-tetrel-3', date: '2026-07-04' },
-  { slug: 'gitblight1-4', date: '2026-07-05' },
-  { slug: 'sjudson-4', date: '2026-07-06' },
-  { slug: 'robchahin-6', date: '2026-07-07' },
-  { slug: 'thecravenone-1', date: '2026-07-08' },
-  { slug: 'sjudson-3', date: '2026-07-09' },
-  { slug: 'klobucar-8', date: '2026-07-10' },
+  { slug: 'gitblight1-4', date: '2026-07-05' }, // held date (news peg)
+  { slug: 'robchahin-7', date: '2026-07-06' },
+  { slug: 'jessica-1', date: '2026-07-07' },
+  { slug: 'gitblight1-5', date: '2026-07-08' },
+  { slug: 'aschmitz-3', date: '2026-07-09' },
+  { slug: 'sjudson-5', date: '2026-07-10' },
+  { slug: 'gitblight1-2', date: '2026-07-11' },
+  { slug: 'thecravenone-1', date: '2026-07-12' },
+  { slug: 'robchahin-6', date: '2026-07-13' },
   { slug: 'bojanrajkovic-4', date: '2026-07-14' }, // held date (author request)
-  { slug: 'aschmitz-1', date: '2026-07-15' },
+  { slug: 'sjudson-8', date: '2026-07-15' },
+  { slug: 'sjudson-4', date: '2026-07-16' },
+  { slug: 'bojanrajkovic-8', date: '2026-07-17' },
+  { slug: 'sjudson-3', date: '2026-07-18' },
+  { slug: 'gitblight1-3', date: '2026-07-19' },
+  { slug: 'klobucar-8', date: '2026-07-20' },
+  { slug: 'sjudson-7', date: '2026-07-21' },
+  { slug: 'sjudson-6', date: '2026-07-22' },
+  { slug: 'aschmitz-1', date: '2026-07-23' },
+  { slug: 'bojanrajkovic-7', date: '2026-07-24' },
 ];
 
 /** Slugs for puzzle files that exist but are not scheduled yet. These are

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { puzzles, MAX_MISTAKES, isReleased, latestReleasedIndex } from './puzzles';
+import { compareReleasedSchedule, fetchScheduleManifest } from './scheduleFreshness';
 import { loadCurrentDay, saveCurrentDay, loadIntroSeenVersion, saveIntroSeenVersion } from './storage';
 import { deriveDayState, deriveDayStates, pickInitialDayIndex } from './dayState';
 import { formatPuzzleDate } from './format';
@@ -27,6 +28,37 @@ import { SettingsModal } from './components/SettingsModal';
 import { NoteSheet } from './components/NoteSheet';
 
 const STATUS_TIMEOUT_MS = 10000;
+const SCHEDULE_REFRESH_PARAM = 'scheduleRefresh';
+const MAX_RELEASE_TIMER_MS = 2_147_483_647;
+const SCHEDULE_VERIFY_RETRY_MS = 60_000;
+
+type ScheduleTrust = 'checking' | 'fresh' | 'stale';
+
+function scheduleManifestUrl(): string {
+  if (typeof window === 'undefined') return 'schedule-manifest.json';
+  const base = new URL(import.meta.env.BASE_URL, window.location.origin);
+  const url = new URL('schedule-manifest.json', base);
+  if (!import.meta.env.DEV) url.searchParams.set('v', String(Date.now()));
+  return url.toString();
+}
+
+function requestScheduleRefresh(beforeRefresh: () => void): boolean {
+  if (typeof window === 'undefined') return false;
+  const url = new URL(window.location.href);
+  if (url.searchParams.has(SCHEDULE_REFRESH_PARAM)) return false;
+  url.searchParams.set(SCHEDULE_REFRESH_PARAM, String(Date.now()));
+  beforeRefresh();
+  window.location.replace(url.toString());
+  return true;
+}
+
+function clearScheduleRefreshParam(): void {
+  if (typeof window === 'undefined') return;
+  const url = new URL(window.location.href);
+  if (!url.searchParams.has(SCHEDULE_REFRESH_PARAM)) return;
+  url.searchParams.delete(SCHEDULE_REFRESH_PARAM);
+  window.history.replaceState(null, '', url.toString());
+}
 
 export function App() {
   const orientation = useOrientation();
@@ -72,6 +104,9 @@ export function App() {
   // specs aren't blocked.
   const isMockMode =
     typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('mock');
+  const [scheduleTrust, setScheduleTrust] = useState<ScheduleTrust>(() =>
+    isMockMode ? 'fresh' : 'checking',
+  );
   const [showConstraintModal, setShowConstraintModal] = useState(false);
   const dismissConstraintModal = useCallback(() => setShowConstraintModal(false), []);
   const [showSettings, setShowSettings] = useState(false);
@@ -91,6 +126,7 @@ export function App() {
   const [dayStates, setDayStates] = useState(() => deriveDayStates(puzzles, todayDay, unlockedDays));
 
   const statusTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const persistBeforeRefreshRef = useRef<() => void>(() => {});
 
   const puzzle = puzzles[currentIndex]!;
 
@@ -108,6 +144,34 @@ export function App() {
     if (statusTimerRef.current) clearTimeout(statusTimerRef.current);
   }, []);
 
+  const verifyScheduleFresh = useCallback(async (): Promise<boolean> => {
+    if (isMockMode) {
+      setScheduleTrust('fresh');
+      return true;
+    }
+
+    try {
+      const manifest = await fetchScheduleManifest(scheduleManifestUrl());
+      const check = compareReleasedSchedule(puzzles, manifest.puzzles);
+      if (check.ok) {
+        setScheduleTrust('fresh');
+        clearScheduleRefreshParam();
+        return true;
+      }
+    } catch {
+      setScheduleTrust((prev) => (prev === 'fresh' ? prev : 'checking'));
+      return false;
+    }
+
+    setScheduleTrust('stale');
+    requestScheduleRefresh(() => persistBeforeRefreshRef.current());
+    return false;
+  }, [isMockMode]);
+
+  useEffect(() => {
+    void verifyScheduleFresh();
+  }, [verifyScheduleFresh]);
+
   /* ── Wire usePuzzleSession ⇄ useAudio without a hook cycle ──
         Session needs `stopAudio` on correct guess + reset; audio needs
         `tracks` from the session. The forward dep goes session → audio
@@ -116,7 +180,12 @@ export function App() {
         by an effect once audio exists. */
   const stopAudioRef = useRef<() => void>(() => {});
   const onStopAudio = useCallback(() => stopAudioRef.current(), []);
-  const session = usePuzzleSession(puzzle, { onStatus: setStatus, onStopAudio });
+  const session = usePuzzleSession(puzzle, {
+    onStatus: setStatus,
+    onStopAudio,
+    persistentStorageTrusted: scheduleTrust !== 'stale',
+  });
+  persistBeforeRefreshRef.current = session.persistNow;
   const audio = useAudio(session.state.tracks);
   useEffect(() => {
     stopAudioRef.current = audio.stopAudio;
@@ -128,10 +197,14 @@ export function App() {
       if (idx === currentIndex) return;
       const p = puzzles[idx];
       if (!p || !isReleased(p, { unlocked: unlockedDays })) return;
+      if (scheduleTrust === 'stale') {
+        setStatus('Puzzle schedule changed. Reload this page before playing.');
+        return;
+      }
       audio.stopAudio();
       setCurrentIndex(idx);
     },
-    [currentIndex, audio, unlockedDays],
+    [currentIndex, audio, unlockedDays, scheduleTrust, setStatus],
   );
 
   /* ── Konami code (↑↑↓↓←→←→BA) unlocks every puzzle ── */
@@ -141,15 +214,46 @@ export function App() {
   }, [setStatus]);
   useKonami(onKonamiUnlock);
 
-  /* ── Countdown announces a day became available naturally ── */
-  const onNaturalUnlock = useCallback((day: number) => {
-    setUnlockedDays((prev) => {
-      if (prev.has(day)) return prev;
-      const next = new Set(prev);
-      next.add(day);
-      return next;
-    });
-  }, []);
+  /* ── Natural release boundary: verify deployed schedule, then unlock ── */
+  useEffect(() => {
+    if (isMockMode) return;
+    let active = true;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+
+    const scheduleNext = () => {
+      const next = puzzles.find((p) => !isReleased(p, { unlocked: unlockedDays }));
+      if (!next) return;
+      const ms = new Date(next.releaseAt).getTime() - Date.now();
+      const delay = ms > 0 ? Math.min(ms, MAX_RELEASE_TIMER_MS) : 0;
+      timer = setTimeout(() => {
+        if (!active) return;
+        const due = new Date(next.releaseAt).getTime() <= Date.now();
+        if (!due) {
+          scheduleNext();
+          return;
+        }
+        void verifyScheduleFresh().then((fresh) => {
+          if (!active) return;
+          if (fresh) {
+            setUnlockedDays((prev) => {
+              if (prev.has(next.day)) return prev;
+              const out = new Set(prev);
+              out.add(next.day);
+              return out;
+            });
+          } else {
+            timer = setTimeout(scheduleNext, SCHEDULE_VERIFY_RETRY_MS);
+          }
+        });
+      }, delay);
+    };
+
+    scheduleNext();
+    return () => {
+      active = false;
+      if (timer) clearTimeout(timer);
+    };
+  }, [isMockMode, unlockedDays, verifyScheduleFresh]);
 
   /* ── Persist current day when puzzle changes ── */
   useEffect(() => {
@@ -282,7 +386,7 @@ export function App() {
               currentDay={puzzle.day}
               onSwitch={onDaySwitch}
             />
-            <Countdown puzzles={puzzles} unlockedDays={unlockedDays} onUnlock={onNaturalUnlock} />
+            <Countdown puzzles={puzzles} unlockedDays={unlockedDays} />
             <div className="subtitle">
               Find four groups of four · PLAY to preview · CUE to mark · SUBMIT when all four are cued
             </div>
@@ -304,7 +408,7 @@ export function App() {
               currentDay={puzzle.day}
               onSwitch={onDaySwitch}
             />
-            <Countdown puzzles={puzzles} unlockedDays={unlockedDays} onUnlock={onNaturalUnlock} />
+            <Countdown puzzles={puzzles} unlockedDays={unlockedDays} />
             {!isBroken && !isTerminalMobile && (
               <SolvedBar
                 themes={puzzle.themes}

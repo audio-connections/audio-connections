@@ -61,6 +61,16 @@ describe('day state storage', () => {
     expect(readDay(6)).toBeNull();
   });
 
+  it('rejects a slug save whose assignment day does not match the current puzzle', () => {
+    saveState('author-1', 42, sample);
+    expect(loadState('author-1', { day: 57 })).toBeNull();
+  });
+
+  it('rejects a dated save whose assignment date does not match the current puzzle', () => {
+    saveState('author-1', 42, sample, '2026-07-05');
+    expect(loadState('author-1', { day: 42, date: '2026-07-06' })).toBeNull();
+  });
+
   it('returns null for malformed JSON instead of throwing', () => {
     localStorage.setItem(dayKey(5), '{ not json');
     expect(readDay(5)).toBeNull();

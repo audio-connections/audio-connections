@@ -5,7 +5,6 @@ import { isReleased } from '../puzzles';
 interface CountdownProps {
   puzzles: Puzzle[];
   unlockedDays: ReadonlySet<number>;
-  onUnlock: (day: number) => void;
 }
 
 function format(ms: number): string {
@@ -20,12 +19,11 @@ function format(ms: number): string {
     : `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
 }
 
-export function Countdown({ puzzles, unlockedDays, onUnlock }: CountdownProps) {
+export function Countdown({ puzzles, unlockedDays }: CountdownProps) {
   const [text, setText] = useState('');
 
   useEffect(() => {
     let active = true;
-    let firedFor: number | null = null;
     function tick() {
       if (!active) return;
       const next = puzzles.find((p) => !isReleased(p, { unlocked: unlockedDays }));
@@ -36,10 +34,6 @@ export function Countdown({ puzzles, unlockedDays, onUnlock }: CountdownProps) {
       const ms = new Date(next.releaseAt).getTime() - Date.now();
       if (ms <= 0) {
         setText('');
-        if (firedFor !== next.day) {
-          firedFor = next.day;
-          onUnlock(next.day);
-        }
         return;
       }
       setText(`Day ${next.day} unlocks in ${format(ms)}`);
@@ -50,7 +44,7 @@ export function Countdown({ puzzles, unlockedDays, onUnlock }: CountdownProps) {
       active = false;
       clearInterval(id);
     };
-  }, [puzzles, unlockedDays, onUnlock]);
+  }, [puzzles, unlockedDays]);
 
   return (
     <div className="unlock-countdown" data-testid="countdown">

@@ -18,7 +18,7 @@ const DAY_KEY_PREFIX = 'audio-connections:day:';
 export function collectBackup(): PerDayRecord[] {
   const records: PerDayRecord[] = [];
   for (const puzzle of puzzles) {
-    const state = loadState(puzzle.id ?? String(puzzle.day));
+    const state = loadState(puzzle.id ?? String(puzzle.day), { day: puzzle.day, date: puzzle.date });
     if (!state || !state.gameOver) continue;
     records.push(stateToRecord(state));
   }
@@ -42,7 +42,7 @@ export function applyBackup(records: PerDayRecord[]): void {
     // assigns LoadedTrack.id (id = i in the flattened theme×track list).
     const trackCount = puzzle.themes.reduce((sum, t) => sum + t.tracks.length, 0);
     const trackOrder = Array.from({ length: trackCount }, (_, i) => i);
-    saveState(puzzle.id ?? String(puzzle.day), puzzle.day, materializeRecord(record, trackOrder));
+    saveState(puzzle.id ?? String(puzzle.day), puzzle.day, materializeRecord(record, trackOrder), puzzle.date);
   }
 }
 

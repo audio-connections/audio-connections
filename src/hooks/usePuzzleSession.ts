@@ -174,6 +174,10 @@ export interface SessionState {
    *  incoming prop's — and so a future slug day saves under its slug, never the
    *  reorderable number. Null whenever `day` is. */
   id: string | null;
+  /** Calendar assignment matching `day`/`id`. Kept in session state for the
+   *  same reason as `day`: during a switch, persistence must describe the
+   *  outgoing puzzle, not the incoming prop. */
+  date: string | null;
   loadStatus: string;
   tracks: LoadedTrack[];
   /** Indexed by themeIdx; length equals puzzle.themes.length once loaded. */
@@ -201,6 +205,7 @@ export function initialSession(themeCount: number, loadStatus: string): SessionS
   return {
     day: null,
     id: null,
+    date: null,
     loadStatus,
     tracks: [],
     themeStates: Array<ThemeState>(themeCount).fill('unsolved'),
@@ -218,9 +223,9 @@ export function initialSession(themeCount: number, loadStatus: string): SessionS
 export type Action =
   | { type: 'load-reset'; themeCount: number; loadStatus: string }
   | { type: 'load-status'; status: string }
-  | { type: 'load-fresh'; day: number; id: string; themeCount: number; tracks: LoadedTrack[]; loadStatus: string }
-  | { type: 'load-restore'; day: number; id: string; themeCount: number; tracks: LoadedTrack[]; persisted: PersistedGameState; loadStatus: string }
-  | { type: 'load-broken'; day: number; id: string; themeCount: number; failedTrackIds: number[] }
+  | { type: 'load-fresh'; day: number; id: string; date?: string; themeCount: number; tracks: LoadedTrack[]; loadStatus: string }
+  | { type: 'load-restore'; day: number; id: string; date?: string; themeCount: number; tracks: LoadedTrack[]; persisted: PersistedGameState; loadStatus: string }
+  | { type: 'load-broken'; day: number; id: string; date?: string; themeCount: number; failedTrackIds: number[] }
   | { type: 'toggle-select'; id: number }
   | { type: 'deselect-all' }
   | { type: 'set-note'; id: number; note: string }
@@ -251,6 +256,7 @@ export function reducer(state: SessionState, action: Action): SessionState {
         ...initialSession(action.themeCount, action.loadStatus),
         day: action.day,
         id: action.id,
+        date: action.date ?? null,
         tracks: action.tracks,
       };
 
@@ -262,6 +268,7 @@ export function reducer(state: SessionState, action: Action): SessionState {
       return {
         day: action.day,
         id: action.id,
+        date: action.date ?? null,
         loadStatus: action.loadStatus,
         tracks: action.tracks,
         themeStates,
@@ -281,6 +288,7 @@ export function reducer(state: SessionState, action: Action): SessionState {
         ...initialSession(action.themeCount, ''),
         day: action.day,
         id: action.id,
+        date: action.date ?? null,
         broken: true,
         failedTrackIds: action.failedTrackIds,
       };
@@ -384,6 +392,7 @@ export function reducer(state: SessionState, action: Action): SessionState {
         ...initialSession(state.themeStates.length, ''),
         day: state.day,
         id: state.id,
+        date: state.date,
         tracks: action.tracks,
       };
   }
@@ -397,6 +406,23 @@ function themeIdxsWhere(themeStates: ThemeState[], predicate: (s: ThemeState) =>
   return out;
 }
 
+function persistSessionState(state: SessionState, date?: string): void {
+  if (state.day === null) return;
+  const solvedThemes = state.themeStates
+    .map((s, i) => (s === 'exiting' || s === 'solved' ? i : -1))
+    .filter((i) => i !== -1);
+  saveState(state.id ?? String(state.day), state.day, {
+    selected: [...state.selected],
+    solvedThemes,
+    notes: [...state.notes],
+    mistakes: state.mistakes,
+    guessHistory: state.guessHistory,
+    gameOver: state.gameOver,
+    trackOrder: state.tracks.map((t) => t.id),
+    guessSignatures: [...state.guessSignatures],
+  }, date);
+}
+
 export interface UsePuzzleSessionOptions {
   /** Called with a transient toast string ("One away…", "Solved: <theme>",
    *  "Already guessed!", etc.). The hook owns *when* to fire it; the caller
@@ -405,6 +431,9 @@ export interface UsePuzzleSessionOptions {
   /** Called when the session needs to silence any currently-playing preview
    *  (correct guess, reset). The hook stays ignorant of the audio system. */
   onStopAudio: () => void;
+  /** False after App has detected that this bundle's schedule is obsolete.
+   *  Play may continue briefly, but durable progress must not be trusted. */
+  persistentStorageTrusted?: boolean;
 }
 
 export interface PuzzleSession {
@@ -424,6 +453,9 @@ export interface PuzzleSession {
   setNote: (id: number, val: string) => void;
   submit: () => void;
   resetPuzzle: () => void;
+  /** Synchronously flush the currently-loaded puzzle state to localStorage.
+   *  Used immediately before a forced schedule refresh. */
+  persistNow: () => void;
 }
 
 /** Owns the per-puzzle state machine, the iTunes preview load, and
@@ -431,7 +463,7 @@ export interface PuzzleSession {
  *  current day, Konami unlocks, completed-day tracking, status toast UI,
  *  audio playback. */
 export function usePuzzleSession(puzzle: Puzzle, options: UsePuzzleSessionOptions): PuzzleSession {
-  const { onStatus, onStopAudio } = options;
+  const { onStatus, onStopAudio, persistentStorageTrusted = true } = options;
   const [state, dispatch] = useReducer(
     reducer,
     undefined,
@@ -449,6 +481,7 @@ export function usePuzzleSession(puzzle: Puzzle, options: UsePuzzleSessionOption
   useEffect(() => {
     const themes = puzzle.themes;
     const day = puzzle.day;
+    const date = puzzle.date;
     // Save-key identity for this puzzle. Legacy day-N → String(day); a slug day
     // → its slug. Threaded into session state so saves key off identity, never
     // the reorderable display number.
@@ -506,6 +539,7 @@ export function usePuzzleSession(puzzle: Puzzle, options: UsePuzzleSessionOption
           type: 'load-broken',
           day,
           id: saveId,
+          date,
           themeCount: themes.length,
           failedTrackIds,
         });
@@ -581,7 +615,8 @@ export function usePuzzleSession(puzzle: Puzzle, options: UsePuzzleSessionOption
       // one. None should exist (the persist effect won't write an unreleased
       // day), but gating here keeps an unreleased day always-fresh and ignores
       // any stale save left by an older build — symmetric with that gate.
-      const persisted = isReleased(puzzle) ? loadState(saveId) : null;
+      const persisted =
+        persistentStorageTrusted && isReleased(puzzle) ? loadState(saveId, { day, date }) : null;
       const loadedIds = loaded.map((t) => t.id);
       if (persisted && setEqual(persisted.trackOrder, loadedIds)) {
         const byId = new Map(loaded.map((t) => [t.id, t]));
@@ -592,6 +627,7 @@ export function usePuzzleSession(puzzle: Puzzle, options: UsePuzzleSessionOption
           type: 'load-restore',
           day,
           id: saveId,
+          date,
           themeCount: themes.length,
           tracks: ordered,
           persisted,
@@ -602,6 +638,7 @@ export function usePuzzleSession(puzzle: Puzzle, options: UsePuzzleSessionOption
           type: 'load-fresh',
           day,
           id: saveId,
+          date,
           themeCount: themes.length,
           tracks: shuffle(loaded),
           loadStatus,
@@ -629,7 +666,7 @@ export function usePuzzleSession(puzzle: Puzzle, options: UsePuzzleSessionOption
     return () => {
       loadGenRef.current++;
     };
-  }, [puzzle.themes, puzzle.day]);
+  }, [puzzle.themes, puzzle.day, puzzle.date, persistentStorageTrusted]);
 
   /* ── Revoke any still-active blob: URLs on unmount ── */
   useEffect(() => {
@@ -647,25 +684,14 @@ export function usePuzzleSession(puzzle: Puzzle, options: UsePuzzleSessionOption
         (post-load-reset, pre-load-fresh), we skip entirely. */
   useEffect(() => {
     if (state.day === null) return;
+    if (!persistentStorageTrusted) return;
     // Persist only days released by date. State for a Konami-unlocked future
     // day is deliberately ephemeral: we don't trust future ordering until a
     // puzzle ships, so anything played there is discarded rather than saved
     // under a key a later reshuffle could point at a different puzzle.
     if (!isReleased(puzzle)) return;
-    const solvedThemes = state.themeStates
-      .map((s, i) => (s === 'exiting' || s === 'solved' ? i : -1))
-      .filter((i) => i !== -1);
-    saveState(state.id ?? String(state.day), state.day, {
-      selected: [...state.selected],
-      solvedThemes,
-      notes: [...state.notes],
-      mistakes: state.mistakes,
-      guessHistory: state.guessHistory,
-      gameOver: state.gameOver,
-      trackOrder: state.tracks.map((t) => t.id),
-      guessSignatures: [...state.guessSignatures],
-    });
-  }, [state]);
+    persistSessionState(state, state.date ?? undefined);
+  }, [state, persistentStorageTrusted]);
 
   /* ── Derived view-model sets ── */
   const solvedThemes = useMemo(
@@ -739,6 +765,11 @@ export function usePuzzleSession(puzzle: Puzzle, options: UsePuzzleSessionOption
     onStatus('Puzzle reset.');
   }, [state.id, state.day, state.tracks, onStatus, onStopAudio]);
 
+  const persistNow = useCallback(() => {
+    if (!isReleased(puzzle)) return;
+    persistSessionState(state, state.date ?? undefined);
+  }, [puzzle, state]);
+
   return {
     state,
     solvedThemes,
@@ -750,5 +781,6 @@ export function usePuzzleSession(puzzle: Puzzle, options: UsePuzzleSessionOption
     setNote,
     submit,
     resetPuzzle,
+    persistNow,
   };
 }

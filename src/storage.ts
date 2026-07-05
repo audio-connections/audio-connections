@@ -17,6 +17,8 @@ export interface PersistedGameState {
    *  still read a save this build wrote — its integrity check keys off `day`.
    *  Also the cross-day-contamination guard. */
   day: number;
+  /** Calendar date this state belongs to. Optional for pre-date-guard saves. */
+  date?: string;
   selected: number[];
   solvedThemes: number[];
   notes: Array<[number, string]>;
@@ -51,7 +53,15 @@ function savedId(parsed: PersistedGameState): string {
   return parsed.id ?? String(parsed.day);
 }
 
-export function loadState(id: string): PersistedGameState | null {
+export interface LoadStateExpectedAssignment {
+  day?: number;
+  date?: string;
+}
+
+export function loadState(
+  id: string,
+  expected?: LoadStateExpectedAssignment,
+): PersistedGameState | null {
   if (typeof localStorage === 'undefined') return null;
   try {
     const raw = localStorage.getItem(key(id));
@@ -61,6 +71,12 @@ export function loadState(id: string): PersistedGameState | null {
     // Reject stale entries whose identity doesn't match the slot — catches a
     // cross-day write (an older build saving Day N-1's state into Day N's slot).
     if (savedId(parsed) !== id) return null;
+    // Reject a save for this same slug/id if it was written while that slug had
+    // a different public assignment in an older schedule.
+    if (expected?.day !== undefined && parsed.day !== expected.day) return null;
+    if (expected?.date !== undefined && parsed.date !== undefined && parsed.date !== expected.date) {
+      return null;
+    }
     return parsed;
   } catch {
     return null;
@@ -74,10 +90,11 @@ export function saveState(
   id: string,
   day: number,
   state: Omit<PersistedGameState, '__v' | 'id' | 'day'>,
+  date?: string,
 ): void {
   if (typeof localStorage === 'undefined') return;
   try {
-    localStorage.setItem(key(id), JSON.stringify({ __v: VERSION, id, day, ...state }));
+    localStorage.setItem(key(id), JSON.stringify({ __v: VERSION, id, day, ...state, ...(date ? { date } : {}) }));
   } catch {
     /* quota or disabled storage — ignore */
   }

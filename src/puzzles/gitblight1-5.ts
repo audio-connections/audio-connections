@@ -27,7 +27,7 @@ const puzzle: PuzzleContent = {
       tracks: [
         { id: 159504663, artist: 'Matthew Broderick', title: 'I Wanna Be a Producer', note: 'The Producers — 1967 film → 2001 musical → 2005 film' },
         { id: 1454446818, artist: 'Nikki Blonsky', title: 'Good Morning Baltimore', note: 'Hairspray — 1988 film → 2002 musical → 2007 film' },
-        { id: 1434903241, artist: 'Michelle Weeks, Tisha Campbell, Tichina Arnold, Ellen Greene & Rick Moranis', title: 'Skid Row (Downtown)', note: 'Little Shop of Horrors — 1960 film → 1982 musical → 1986 film' },
+        { id: 1720675278, artist: 'Taraji P. Henson', title: 'Push Da Button', note: 'The Color Purple — 1985 film → 2005 musical → 2023 film' },
         { id: 1720486063, artist: "Auli'i Cravalho", title: "I'd Rather Be Me", note: 'Mean Girls — 2004 film → 2018 musical → 2024 film' },
       ],
     },

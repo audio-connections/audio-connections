@@ -14,21 +14,21 @@ const puzzle: PuzzleContent = {
       ],
     },
     {
-      theme: 'MySpace scene anthems',
-      tracks: [
-        { id: 209388682, artist: 'My Chemical Romance', title: 'Welcome to the Black Parade', note: '' },
-        { id: 1440776758, artist: 'AFI', title: 'Miss Murder', note: '' },
-        { id: 1440839332, artist: 'Thirty Seconds to Mars', title: 'The Kill (Bury Me)', note: '' },
-        { id: 1585055686, artist: 'Taking Back Sunday', title: 'MakeDamnSure', note: '' },
-      ],
-    },
-    {
       theme: 'Made for a 2006 movie',
       tracks: [
         { id: 1440667482, artist: 'Rascal Flatts', title: 'Life Is a Highway', note: 'Cars — Tom Cochrane cover recorded for the film' },
         { id: 1440747342, artist: 'Troy & Gabriella', title: 'Breaking Free', note: 'High School Musical' },
         { id: 1469577741, artist: 'Jack Johnson', title: 'Upside Down', note: 'Curious George' },
         { id: 206338443, artist: 'Sarah McLachlan', title: 'Ordinary Miracle', note: "Charlotte's Web" },
+      ],
+    },
+    {
+      theme: 'MySpace scene anthems',
+      tracks: [
+        { id: 209388682, artist: 'My Chemical Romance', title: 'Welcome to the Black Parade', note: '' },
+        { id: 1440776758, artist: 'AFI', title: 'Miss Murder', note: '' },
+        { id: 1440839332, artist: 'Thirty Seconds to Mars', title: 'The Kill (Bury Me)', note: '' },
+        { id: 1585055686, artist: 'Taking Back Sunday', title: 'MakeDamnSure', note: '' },
       ],
     },
     {

@@ -24,7 +24,7 @@ const puzzle: PuzzleContent = {
     {
       theme: 'Songs from rock operas',
       tracks: [
-        { id: 1461215934, artist: 'The Who', title: "We're Not Gonna Take It", note: 'Tommy (1969) — not the Twisted Sister song' },
+        { id: 1440812780, artist: 'Murray Head', title: 'Superstar', note: 'Jesus Christ Superstar (1970)' },
         { id: 1065976170, artist: 'Pink Floyd', title: 'Comfortably Numb', note: 'The Wall (1979)' },
         { id: 1161539471, artist: 'Green Day', title: 'American Idiot', note: 'American Idiot (2004)' },
         { id: 1440714786, artist: 'Styx', title: 'Mr. Roboto', note: 'Kilroy Was Here (1983)' },
@@ -36,7 +36,7 @@ const puzzle: PuzzleContent = {
         { id: 1452805016, artist: 'Elton John', title: 'Pinball Wizard', note: 'Giant Doc Martens boots in Tommy (1975)' },
         { id: 290073045, artist: 'Talking Heads', title: 'Girlfriend Is Better (Live)', note: "David Byrne's big suit in Stop Making Sense" },
         { id: 250500433, artist: '"Weird Al" Yankovic', title: 'Fat', note: 'The fat suit, parodying "Bad"' },
-        { id: 302943332, artist: 'Missy Elliott', title: 'The Rain (Supa Dupa Fly)', note: 'The inflatable vinyl suit in the video' },
+        { id: 1442839681, artist: 'Ludacris', title: 'Stand Up (feat. Shawnna)', note: 'The giant shoe (and hair) in the video' },
       ],
     },
   ],

@@ -36,7 +36,7 @@ const puzzle: PuzzleContent = {
         { id: 1452805016, artist: 'Elton John', title: 'Pinball Wizard', note: 'Giant Doc Martens boots in Tommy (1975)' },
         { id: 290073045, artist: 'Talking Heads', title: 'Girlfriend Is Better (Live)', note: "David Byrne's big suit in Stop Making Sense" },
         { id: 250500433, artist: '"Weird Al" Yankovic', title: 'Fat', note: 'The fat suit, parodying "Bad"' },
-        { id: 302943332, artist: 'Missy Elliott', title: 'The Rain (Supa Dupa Fly)', note: 'The inflatable vinyl suit in the video' },
+        { id: 1442839681, artist: 'Ludacris', title: 'Stand Up (feat. Shawnna)', note: 'The giant shoe (and hair) in the video' },
       ],
     },
   ],

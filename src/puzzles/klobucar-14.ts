@@ -24,7 +24,7 @@ const puzzle: PuzzleContent = {
     {
       theme: 'Songs from rock operas',
       tracks: [
-        { id: 1461215934, artist: 'The Who', title: "We're Not Gonna Take It", note: 'Tommy (1969) — not the Twisted Sister song' },
+        { id: 1440812780, artist: 'Murray Head', title: 'Superstar', note: 'Jesus Christ Superstar (1970)' },
         { id: 1065976170, artist: 'Pink Floyd', title: 'Comfortably Numb', note: 'The Wall (1979)' },
         { id: 1161539471, artist: 'Green Day', title: 'American Idiot', note: 'American Idiot (2004)' },
         { id: 1440714786, artist: 'Styx', title: 'Mr. Roboto', note: 'Kilroy Was Here (1983)' },

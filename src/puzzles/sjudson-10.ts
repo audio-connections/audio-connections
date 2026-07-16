@@ -24,7 +24,7 @@ const puzzle: PuzzleContent = {
         { id: 1443808042, artist: 'Johnny Gill', title: 'My, My, My', note: '' },
         { id: 1440770080, artist: 'Bell Biv DeVoe', title: 'Poison', note: '' },
         { id: 1440773792, artist: 'Bobby Brown', title: 'Every Little Step', note: '' },
-        { id: 1440651307, artist: 'New Edition', title: 'Can You Stand The Rain', note: '' },
+        { id: 1440770518, artist: 'Ralph Tresvant', title: 'Sensitivity', note: '' },
       ],
     },
     {

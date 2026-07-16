@@ -1,16 +1,18 @@
 // Emit a small, first-class schedule integrity manifest at build time:
 // dist/schedule-manifest.json.
 //
-// Unlike api/v0/puzzle.json, this carries no puzzle content or answers. It is
+// Unlike api/v0/puzzle.json, this carries no puzzle content or answers — only
+// schedule identity plus an opaque per-puzzle content fingerprint. It is
 // intentionally just enough for an already-open client to detect that its
-// bundled schedule is obsolete before it unlocks or persists authored-slug
-// progress.
+// bundled schedule OR a released puzzle's tracks are obsolete before it
+// unlocks or persists authored-slug progress.
 import { readdirSync } from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { join } from 'node:path';
 import type { Plugin } from 'vite';
 import type { PuzzleContent } from '../src/types';
 import { LAUNCH_EPOCH, idFromSlug, resolve, schedule } from '../src/schedule';
+import { puzzleContentFingerprint } from '../src/scheduleFreshness';
 
 const PUZZLE_FILE_RE = /^[a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*\.ts$/;
 const OUT_FILE = 'schedule-manifest.json';
@@ -39,6 +41,7 @@ async function buildPayload(dir: string, bust?: string | number): Promise<string
     day: r.day,
     date: r.date,
     releaseAt: r.releaseAt,
+    contentHash: puzzleContentFingerprint(r.content),
   }));
 
   return JSON.stringify({ schemaVersion: 1, puzzles }, null, 2) + '\n';

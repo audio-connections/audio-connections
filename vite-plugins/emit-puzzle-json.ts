@@ -19,6 +19,7 @@ import { join } from 'node:path';
 import type { Plugin } from 'vite';
 import type { PuzzleContent } from '../src/types';
 import { LAUNCH_EPOCH, findBacklogSlugs, idFromSlug, resolve, schedule } from '../src/schedule';
+import { puzzleContentFingerprint } from '../src/scheduleFreshness';
 
 // Matches the filename guard used by check-puzzles + the data tests: a slug is
 // alphanumerics joined by single hyphens. Excludes template.ts and stray files.
@@ -60,6 +61,9 @@ async function buildPayload(dir: string, bust?: string | number): Promise<string
     releaseAt: r.releaseAt,
     author: r.content.author,
     ...(r.content.constraint !== undefined ? { constraint: r.content.constraint } : {}),
+    // Same fingerprint the schedule manifest publishes, so tooling can match a
+    // manifest row to this catalogue entry without diffing themes.
+    contentHash: puzzleContentFingerprint(r.content),
     themes: r.content.themes,
   }));
 
@@ -70,6 +74,7 @@ async function buildPayload(dir: string, bust?: string | number): Promise<string
       id: idFromSlug(slug),
       author: content.author,
       ...(content.constraint !== undefined ? { constraint: content.constraint } : {}),
+      contentHash: puzzleContentFingerprint(content),
       themes: content.themes,
     };
   });

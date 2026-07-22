@@ -24,7 +24,7 @@ const puzzle: PuzzleContent = {
     {
       theme: 'Prominent falsetto vocals',
       tracks: [
-        { id: 1442259185, artist: 'Bee Gees', title: "Stayin' Alive", note: '' },
+        { id: 870436192, artist: 'The Four Seasons', title: 'Sherry', note: '' },
         { id: 6433514, artist: 'The Darkness', title: 'I Believe in a Thing Called Love', note: '' },
         { id: 1442865074, artist: 'The Beach Boys', title: 'Good Vibrations', note: '' },
         { id: 1440812173, artist: 'The Rolling Stones', title: 'Emotional Rescue', note: '' },

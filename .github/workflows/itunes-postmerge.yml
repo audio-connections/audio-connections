@@ -18,25 +18,36 @@ on:
 permissions:
   contents: read
 
+# Serialize per-ref rather than cancelling: every merge commit to main deserves
+# its own check, so a fast follow-up push queues behind the first run instead of
+# superseding it.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   itunes:
+    name: iTunes ID check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           persist-credentials: false
-      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 24
           cache: npm
       - run: npm ci
       - name: Scope iTunes check to pushed puzzle files
         if: github.event_name == 'push'
+        env:
+          BEFORE: ${{ github.event.before }}
+          SHA: ${{ github.sha }}
         run: |
           {
             echo 'ITUNES_CHANGED_FILES<<EOF'
-            git diff --name-only --diff-filter=ACMR "${{ github.event.before }}" "${{ github.sha }}" -- 'src/puzzles/*.ts' ':(exclude)src/puzzles/template.ts'
+            git diff --name-only --diff-filter=ACMR "$BEFORE" "$SHA" -- 'src/puzzles/*.ts' ':(exclude)src/puzzles/template.ts'
             echo EOF
           } >> "$GITHUB_ENV"
       - name: Changed puzzle iTunes check

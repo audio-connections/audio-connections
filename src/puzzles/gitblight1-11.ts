@@ -32,7 +32,7 @@ const puzzle: PuzzleContent = {
       ],
     },
     {
-      theme: "The Leftovers — actual songs from Season 3 episodes",
+      theme: "The Leftovers — actual songs from Season 3 opening sequences",
       tracks: [
         { id: 1250228686, artist: 'Iris DeMent', title: 'Let the Mystery Be', note: 'The Season 2 main title theme, and again for the Season 3 finale' },
         { id: 1869482307, artist: 'Richard Cheese', title: 'Personal Jesus', note: '"Crazy Whitefella Thinking" — a lounge cover of Depeche Mode' },

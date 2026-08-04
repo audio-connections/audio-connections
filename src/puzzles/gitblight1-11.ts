@@ -2,7 +2,7 @@ import type { PuzzleContent } from '../types';
 
 const puzzle: PuzzleContent = {
   author: 'J. Bowman Light',
-  constraint: 'Every track here is tangled up with a TV title sequence',
+  constraint: '16 artists, 4 TV title sequences',
   themes: [
     {
       theme: 'The Wire — "Way Down in the Hole"',
@@ -32,7 +32,7 @@ const puzzle: PuzzleContent = {
       ],
     },
     {
-      theme: "Opening-title song for a Leftovers Season 3 episode",
+      theme: "The Leftovers — actual songs from Season 3 episodes",
       tracks: [
         { id: 1250228686, artist: 'Iris DeMent', title: 'Let the Mystery Be', note: 'The Season 2 main title theme, and again for the Season 3 finale' },
         { id: 1869482307, artist: 'Richard Cheese', title: 'Personal Jesus', note: '"Crazy Whitefella Thinking" — a lounge cover of Depeche Mode' },

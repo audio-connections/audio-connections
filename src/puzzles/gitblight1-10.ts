@@ -31,14 +31,12 @@ const puzzle: PuzzleContent = {
       ],
     },
     {
-      // Each season of The Wire used a different cover of Tom Waits' "Way Down in the Hole"
-      // Category shows each artist's own non-cover hit; the trivia is the Wire cover.
-      theme: 'Covered "Way Down in the Hole" for a Wire season',
+      theme: 'Bob Dylan Covers',
       tracks: [
-        { id: 1653693701, artist: 'The Blind Boys of Alabama', title: 'Run On For A Long Time', note: 'S1' },
-        { id: 1695048155, artist: 'Tom Waits', title: 'Downtown Train', note: 'S2 — original artist' },
-        { id: 322037300, artist: 'The Neville Brothers', title: 'Tell It Like It Is', note: 'S3' },
-        { id: 1440832545, artist: 'Steve Earle', title: 'Copperhead Road', note: 'S5' },
+        { id: 79029905, artist: 'Peter, Paul & Mary', title: "Blowin' In the Wind" },
+        { id: 357653191, artist: 'Jimi Hendrix', title: 'All Along the Watchtower' },
+        { id: 1444058834, artist: 'William Shatner', title: 'Mr. Tambourine Man' },
+        { id: 1545382976, artist: 'Adele', title: 'Make You Feel My Love' },
       ],
     },
   ],

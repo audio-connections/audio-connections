@@ -35,7 +35,7 @@ const puzzle: PuzzleContent = {
       tracks: [
         { id: 1755457125, artist: 'Jane’s Addiction', title: 'Imminent Redemption' },
         { id: 1589760362, artist: 'Pixies', title: 'Indie Cindy' },
-        { id: 1644221111, artist: 'The Smashing Pumpkins', title: 'Beguiled', note: 'Off the three-act rock opera “Atum.”' },
+        { id: 6781298157, artist: 'The Smashing Pumpkins', title: 'Beguiled', note: 'Off the three-act rock opera “Atum.”' },
         { id: 1440756379, artist: 'Guns N’ Roses', title: 'Chinese Democracy' },
       ],
     },

@@ -26,7 +26,7 @@ const puzzle: PuzzleContent = {
       tracks: [
         { id: 1301440487, artist: 'Bananarama', title: 'Cruel Summer' },
         { id: 282658484, artist: 'George Michael', title: 'Father Figure' },
-        { id: 1428782513, artist: 'Maroon 5', title: 'This Love' },
+        { id: 1615585009, artist: 'Harry Styles', title: 'Daylight' },
         { id: 1758438884, artist: 'Aloe Blacc', title: 'The Man' },
       ],
     },

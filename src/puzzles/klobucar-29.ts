@@ -24,7 +24,7 @@ const puzzle: PuzzleContent = {
     {
       theme: 'Musicians inducted into the Rock and Roll Hall of Fame as both a solo artist and band member',
       tracks: [
-        { id: 993867446, artist: 'Tina Turner', title: 'What\'s Love Got to Do with It', note: 'Inducted with Ike & Tina Turner (1991) and as a solo artist (2021)' },
+        { id: 219394103, artist: 'Stevie Nicks', title: 'Stand Back', note: 'Inducted with Fleetwood Mac (1998) and as a solo artist (2019) — the first woman inducted twice into the Rock Hall' },
         { id: 987872731, artist: 'Peter Gabriel', title: 'Sledgehammer', note: 'Inducted with Genesis (2010) and as a solo artist (2014)' },
         { id: 1067474759, artist: 'Curtis Mayfield', title: 'Move On Up', note: 'Inducted with The Impressions (1991) and as a solo artist (1999)' },
         { id: 135132767, artist: 'Neil Young', title: 'Harvest Moon', note: 'Inducted with Buffalo Springfield (1997) and as a solo artist (1995)' },

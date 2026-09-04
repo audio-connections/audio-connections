@@ -25,7 +25,7 @@ const puzzle: PuzzleContent = {
       theme: 'Songs featured on the Guardians of the Galaxy: Awesome Mix Vol. 1',
       tracks: [
         { id: 197055097, artist: 'Redbone', title: 'Come and Get Your Love' },
-        { id: 1440747928, artist: 'The Runaways', title: 'Cherry Bomb' },
+        { id: 924503377, artist: 'Blue Swede', title: 'Hooked on a Feeling' },
         { id: 1440924549, artist: '10cc', title: 'I\'m Not In Love' },
         { id: 1443816839, artist: 'Elvin Bishop', title: 'Fooled Around and Fell in Love' },
       ],

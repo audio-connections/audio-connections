@@ -18,9 +18,9 @@ const puzzle: PuzzleContent = {
           title: 'Hey Jude',
         },
         {
-          id: 1443151733,
+          id: 1440953751,
           artist: 'Paul McCartney',
-          title: "Maybe I'm Amazed",
+          title: 'Coming Up',
         },
         {
           id: 1443413828,

@@ -24,7 +24,7 @@ const puzzle: PuzzleContent = {
     {
       theme: 'Hit songs written by Prince for other artists',
       tracks: [
-        { id: 200007628, artist: 'The Bangles', title: 'Manic Monday', note: 'Written by Prince under the pseudonym Christopher' },
+        { id: 124887851, artist: 'Sheila E.', title: 'The Glamorous Life', note: 'Written and produced by Prince' },
         { id: 140249673, artist: 'Chaka Khan', title: 'I Feel for You', note: 'Written by Prince' },
         { id: 1629185307, artist: 'Sinéad O\'Connor', title: 'Nothing Compares 2 U', note: 'Written by Prince' },
         { id: 302057926, artist: 'The Time', title: 'Jungle Love', note: 'Written and produced by Prince' },

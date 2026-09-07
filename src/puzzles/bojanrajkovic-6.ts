@@ -37,7 +37,7 @@ const puzzle: PuzzleContent = {
         { id: 1440761672, artist: "Chris Cornell", title: "You Know My Name", note: "Casino Royale (2006) — Bond wins it all at Texas hold 'em" },
         { id: 1440495612, artist: "Marvin Hamlisch", title: "The Entertainer", note: "The Sting (1973) — the ragtime theme for the big poker con" },
         { id: 258656687, artist: "Clint Black", title: "A Good Run of Bad Luck", note: "Written for Maverick (1994), Mel Gibson's poker western" },
-        { id: 1569554513, artist: "Ray Charles", title: "The Cincinnati Kid", note: "Title song of the 1965 five-card-stud classic" },
+        { id: 6796762492, artist: "Ray Charles", title: "The Cincinnati Kid", note: "Title song of the 1965 five-card-stud classic" },
       ],
     },
   ],

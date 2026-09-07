@@ -59,9 +59,13 @@ export interface ReuseOptions {
   /** ISO date (UTC). Pairs whose later occurrence is on or before this date are
    *  historical and suppressed. Omit to report every pair. */
   today?: string;
+  /** Which kinds to report. Defaults to all four. The dev-server plugin
+   *  leaves out `artist` — the least harmful repeat, worth a look when a
+   *  maintainer asks for it (check:reuse) but not a warning on every build. */
+  kinds?: readonly ReuseKind[];
 }
 
-export const DEFAULT_REUSE_OPTIONS: Required<Omit<ReuseOptions, 'today'>> = {
+export const DEFAULT_REUSE_OPTIONS: Required<Omit<ReuseOptions, 'today' | 'kinds'>> = {
   idWarnDays: 14,
   songWarnDays: 14,
   artistWarnDays: 7,
@@ -232,10 +236,11 @@ export function findReuseWarnings(
   }
 
   const out: ReuseWarning[] = [];
-  collect('theme', byTheme, opts.themeWarnDays, opts.today, out);
-  collect('id', byId, opts.idWarnDays, opts.today, out);
-  collect('song', bySong, opts.songWarnDays, opts.today, out);
-  collect('artist', byArtist, opts.artistWarnDays, opts.today, out);
+  const kinds = new Set<ReuseKind>(opts.kinds ?? ['theme', 'id', 'song', 'artist']);
+  if (kinds.has('theme')) collect('theme', byTheme, opts.themeWarnDays, opts.today, out);
+  if (kinds.has('id')) collect('id', byId, opts.idWarnDays, opts.today, out);
+  if (kinds.has('song')) collect('song', bySong, opts.songWarnDays, opts.today, out);
+  if (kinds.has('artist')) collect('artist', byArtist, opts.artistWarnDays, opts.today, out);
   return out;
 }
 

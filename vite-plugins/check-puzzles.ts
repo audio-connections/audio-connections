@@ -2,7 +2,8 @@
 //
 // Runs at build start and on puzzle-file changes during dev. Emits warnings
 // (via the dev server logger) when two puzzles reuse the same iTunes id, song,
-// artist, or category label too close together — surfaced in the terminal
+// or category label too close together (artist repeats are left to the
+// on-demand check:reuse script) — surfaced in the terminal
 // where Vite is running, not in the browser console. Only pairs a maintainer
 // can still act on (later side future-dated or in the backlog) are reported.
 //
@@ -13,7 +14,7 @@
 // without Vite. The same check is available on the command line as
 // `npm run check:reuse`.
 import type { Plugin } from 'vite';
-import { findReuseWarnings, formatReuseWarning, type ReuseOptions } from '../src/puzzles.reuse.ts';
+import { findReuseWarnings, formatReuseWarning, type ReuseKind, type ReuseOptions } from '../src/puzzles.reuse.ts';
 import { scheduledDates } from '../src/puzzles.proximity.ts';
 import { loadPuzzleContents } from './load-puzzles.ts';
 
@@ -25,7 +26,10 @@ interface Options extends Omit<ReuseOptions, 'today'> {
 async function run(dir: string, opts: Omit<ReuseOptions, 'today'>, bust: boolean, warn: (msg: string) => void): Promise<void> {
   const files = await loadPuzzleContents(dir, bust);
   const today = new Date().toISOString().slice(0, 10); // UTC, matches schedule dates
-  for (const w of findReuseWarnings(files, scheduledDates(), { ...opts, today })) {
+  // No artist warnings here: artist repeats are the least harmful kind and
+  // would fire on most builds. `npm run check:reuse` still lists them.
+  const kinds: ReuseKind[] = ['theme', 'id', 'song'];
+  for (const w of findReuseWarnings(files, scheduledDates(), { ...opts, today, kinds })) {
     warn(formatReuseWarning(w));
   }
 }

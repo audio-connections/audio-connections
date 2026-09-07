@@ -287,3 +287,14 @@ describe('against the real puzzle set', () => {
     }
   });
 });
+
+describe('kinds option', () => {
+  it('limits the report to the requested kinds', () => {
+    const files = new Map([
+      ['a-1', content([['Rain', [[1, 'Ray Charles', 'A']]]])],
+      ['a-2', content([['Rain', [[1, 'Ray Charles', 'B']]]])],
+    ]);
+    expect(findReuseWarnings(files, dates).map((w) => w.kind).sort()).toEqual(['artist', 'id', 'theme']);
+    expect(findReuseWarnings(files, dates, { kinds: ['theme', 'id', 'song'] }).map((w) => w.kind).sort()).toEqual(['id', 'theme']);
+  });
+});

@@ -13,11 +13,11 @@ const puzzle: PuzzleContent = {
       ],
     },
     {
-      theme: 'Parenthetical subtitles in the song title',
+      theme: 'Parenthetical phrases for 400, Trebek',
       tracks: [
         { id: 1443846163, artist: 'Rupert Holmes', title: 'Escape (The Pina Colada Song)' },
         { id: 217556132, artist: 'Blue Öyster Cult', title: "(Don't Fear) The Reaper" },
-        { id: 1707066460, artist: 'Steam', title: 'Na Na Hey Hey Kiss Him Goodbye' },
+        { id: 1468029636, artist: 'The Beatles', title: 'Norwegian Wood (This Bird Has Flown)' },
         { id: 1440743544, artist: 'The Rolling Stones', title: "(I Can't Get No) Satisfaction" },
       ],
     },
@@ -33,8 +33,8 @@ const puzzle: PuzzleContent = {
     {
       theme: 'Rockstars with PhD degrees in STEM',
       tracks: [
-        { id: 1485071592, artist: 'Bad Religion', title: '21st Century (Digital Boy)', note: 'Greg Graffin earned a PhD in Zoology from Cornell University' },
-        { id: 1485034810, artist: 'The Offspring', title: "Come Out and Play (Keep 'Em Separated)", note: 'Dexter Holland earned a PhD in Molecular Biology from USC' },
+        { id: 1485042250, artist: 'Bad Religion', title: 'Atomic Garden', note: 'Greg Graffin earned a PhD in Zoology from Cornell University' },
+        { id: 1485034811, artist: 'The Offspring', title: 'Self Esteem', note: 'Dexter Holland earned a PhD in Molecular Biology from USC' },
         { id: 1614602775, artist: 'Descendents', title: 'Hope', note: 'Milo Aukerman earned a PhD in Biochemistry from UC San Diego' },
         { id: 1440770302, artist: 'Queen', title: 'Fat Bottomed Girls', note: 'Brian May earned a PhD in Astrophysics from Imperial College London' },
       ],

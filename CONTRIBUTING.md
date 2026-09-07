@@ -20,7 +20,7 @@ npm run typecheck      TypeScript check only, no build.
 npm run test:unit      Vitest, offline. ~10s. Pure logic + puzzle data shape.
 npm run test:itunes    Vitest with the iTunes config. Hits the iTunes API for changed puzzle files.
 npm run test:itunes:all Full-fleet iTunes sweep for maintainer/catalog drift checks.
-npm test               Playwright end-to-end. ~30-60s. Boots dev server, drives Chromium.
+npm test               Playwright end-to-end. ~15s. Builds once and serves it with `vite preview` (or reuses a running `npm run dev`), drives Chromium.
 npm run validate       Composite for puzzle authors: npm run typecheck + test:unit + test:itunes + test:past-days.
 npm run test:past-days Fails if you moved an already-released puzzle (reorder/rename/re-date). Diffs against origin/main.
 npm run schedule:preview  Print the resolved schedule, backlog count, and warnings (thin runway, calendar gaps). Read-only.

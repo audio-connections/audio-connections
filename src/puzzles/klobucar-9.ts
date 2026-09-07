@@ -9,7 +9,7 @@ const puzzle: PuzzleContent = {
       tracks: [
         { id: 260227740, artist: 'Danny Elfman', title: 'The Simpsons Theme (Orchestral Version)', note: 'The Simpsons' },
         { id: 1609311990, artist: 'They Might Be Giants', title: 'Boss of Me', note: 'Malcolm in the Middle' },
-        { id: 1688631978, artist: 'Phantom Planet', title: 'California', note: 'The O.C.' },
+        { id: 169731532, artist: 'Phantom Planet', title: 'California', note: 'The O.C.' },
         { id: 1440874843, artist: 'Frank Sinatra', title: 'Love and Marriage', note: 'Married... with Children' },
       ],
     },

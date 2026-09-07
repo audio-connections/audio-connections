@@ -8,7 +8,7 @@
  *  reproduces identically on every build and is exhaustively unit-testable.
  *  The app loader (src/puzzles.ts) feeds this to `resolve()` at startup.
  */
-import type { PuzzleContent } from './types';
+import type { PuzzleContent } from './types.ts';
 
 export type { PuzzleContent };
 

@@ -17,8 +17,8 @@ import { readdirSync } from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { join } from 'node:path';
 import type { Plugin } from 'vite';
-import type { PuzzleContent } from '../src/types';
-import { LAUNCH_EPOCH, findBacklogSlugs, idFromSlug, resolve, schedule } from '../src/schedule';
+import type { PuzzleContent } from '../src/types.ts';
+import { LAUNCH_EPOCH, findBacklogSlugs, idFromSlug, resolve, schedule } from '../src/schedule.ts';
 
 // Matches the filename guard used by check-puzzles + the data tests: a slug is
 // alphanumerics joined by single hyphens. Excludes template.ts and stray files.

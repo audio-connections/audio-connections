@@ -1,9 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { applyBackup, collectBackup } from '../backup';
 import { decodeBackup, encodeBackup } from '../transfer';
+import type { Stats } from '../stats';
+import { StatsCard } from './StatsCard';
 
 interface SettingsModalProps {
   onClose: () => void;
+  stats: Stats;
 }
 
 type ExportState = 'idle' | 'copied' | 'failed';
@@ -12,7 +15,7 @@ type ImportPhase =
   | { kind: 'error'; message: string }
   | { kind: 'confirm'; incomingCount: number; b64: string };
 
-export function SettingsModal({ onClose }: SettingsModalProps) {
+export function SettingsModal({ onClose, stats }: SettingsModalProps) {
   const [exportState, setExportState] = useState<ExportState>('idle');
   const [importText, setImportText] = useState('');
   const [importPhase, setImportPhase] = useState<ImportPhase>({ kind: 'idle' });
@@ -77,6 +80,15 @@ export function SettingsModal({ onClose }: SettingsModalProps) {
           ×
         </button>
         <h2 className="settings-title">Settings</h2>
+
+        <section className="settings-section">
+          <h3>Your record</h3>
+          {stats.played === 0 ? (
+            <p className="settings-hint">Nothing on the record yet. Finish a puzzle and your stats show up here.</p>
+          ) : (
+            <StatsCard stats={stats} />
+          )}
+        </section>
 
         <section className="settings-section">
           <h3>Export</h3>

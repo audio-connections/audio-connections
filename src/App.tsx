@@ -4,6 +4,7 @@ import { compareReleasedSchedule, fetchScheduleManifest } from './scheduleFreshn
 import { loadCurrentDay, saveCurrentDay, loadIntroSeenVersion, saveIntroSeenVersion } from './storage';
 import { deriveDayState, deriveDayStates, pickInitialDayIndex } from './dayState';
 import { formatPuzzleDate } from './format';
+import { computeStats } from './stats';
 import { useAudio } from './hooks/useAudio';
 import { useKonami } from './hooks/useKonami';
 import { usePuzzleSession } from './hooks/usePuzzleSession';
@@ -260,6 +261,13 @@ export function App() {
     saveCurrentDay(puzzle.day);
   }, [puzzle.day]);
 
+  /* ── Document title tracks the puzzle in view (tab label, history,
+        bookmarks). The static <title> in index.html is the generic
+        fallback for scrapers, which don't run this. ── */
+  useEffect(() => {
+    document.title = `Audio Connections ${puzzle.day} · by ${puzzle.author}`;
+  }, [puzzle.day, puzzle.author]);
+
   /* ── Constraint modal: open on every day-switch (and initial load) when
         the puzzle carries a constraint. Skipped in mock mode and while the
         intro is still up so the two overlays don't stack. ── */
@@ -275,6 +283,11 @@ export function App() {
   useEffect(() => {
     setDayStates(deriveDayStates(puzzles, todayDay, unlockedDays));
   }, [session.state, todayDay, unlockedDays]);
+
+  // Lifetime record for the end panel + settings. dayStates is reseeded after
+  // every persist, so by the time the end panel renders this includes the
+  // day that just finished.
+  const stats = useMemo(() => computeStats(dayStates), [dayStates]);
 
   const heading = `Audio Connections ${puzzle.day}`;
   const dateText = useMemo(() => formatPuzzleDate(puzzle.date), [puzzle.date]);
@@ -343,7 +356,7 @@ export function App() {
       {showConstraintModal && puzzle.constraint && (
         <ConstraintModal constraint={puzzle.constraint} onDismiss={dismissConstraintModal} />
       )}
-      {showSettings && <SettingsModal onClose={() => setShowSettings(false)} />}
+      {showSettings && <SettingsModal onClose={() => setShowSettings(false)} stats={stats} />}
       {editingTileId !== null && (() => {
         const track = session.state.tracks.find((t) => t.id === editingTileId);
         if (!track) return null;
@@ -494,6 +507,7 @@ export function App() {
                 guessHistory={session.state.guessHistory}
                 author={puzzle.author}
                 date={dateText}
+                stats={stats}
               />
             )}
             <Grid

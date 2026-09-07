@@ -4,6 +4,7 @@ const VERSION = 1;
 const PREFIX = 'audio-connections:day:';
 const CURRENT_DAY_KEY = 'audio-connections:currentDay';
 const INTRO_SEEN_KEY = 'audio-connections:introSeen';
+const SHARE_STYLE_KEY = 'audio-connections:shareStyle';
 
 export interface PersistedGameState {
   __v: number;
@@ -151,6 +152,27 @@ export function saveIntroSeenVersion(version: number): void {
   if (typeof localStorage === 'undefined') return;
   try {
     localStorage.setItem(INTRO_SEEN_KEY, String(version));
+  } catch {
+    /* ignore */
+  }
+}
+
+/** Raw share-style preference. Returned unvalidated (a string or null) so
+ *  this module stays free of UI imports; the caller narrows it with
+ *  isShareStyle() and falls back to the default for anything else. */
+export function loadShareStyle(): string | null {
+  if (typeof localStorage === 'undefined') return null;
+  try {
+    return localStorage.getItem(SHARE_STYLE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+export function saveShareStyle(style: string): void {
+  if (typeof localStorage === 'undefined') return;
+  try {
+    localStorage.setItem(SHARE_STYLE_KEY, style);
   } catch {
     /* ignore */
   }

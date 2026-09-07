@@ -3637,3 +3637,48 @@ h1 {
 .settings-card .stats-card { color: var(--text-primary); }
 .settings-card .stats-grid dt,
 .settings-card .stats-dist-title { color: var(--text-secondary); opacity: 1; }
+/* The 460px card can't fit numbers and bars side by side; stack them. */
+.settings-card .stats-card { grid-template-columns: 1fr; }
+
+/* ── Share actions (EndPanel) — native Share on touch devices, Copy beside it. */
+.share-actions {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.copy-btn--secondary {
+  background: transparent;
+  color: var(--paper-ink);
+  border: 1px solid var(--paper-ink);
+}
+.copy-btn--secondary:hover { background: rgba(26, 22, 16, 0.08); }
+.copy-btn--secondary.copied { color: var(--paper); border-color: #2d5a2a; }
+
+/* ── Settings segmented control (share style) ── */
+.settings-segmented {
+  display: inline-flex;
+  border: 1px solid var(--text-muted);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+.settings-segment {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+.settings-segment + .settings-segment { border-left: 1px solid var(--text-muted); }
+.settings-segment:hover { color: var(--text-primary); }
+.settings-segment.active {
+  background: var(--text-primary);
+  color: var(--bg-chassis);
+}

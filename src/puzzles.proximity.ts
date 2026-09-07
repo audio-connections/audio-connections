@@ -5,7 +5,7 @@
 // Day numbers and dates are DERIVED from src/schedule.ts (puzzle files are
 // content-only), so proximity is measured against the *scheduled* dates, not
 // anything stored in the files.
-import { resolve, schedule, type ScheduleEntry } from './schedule';
+import { resolve, schedule, type ScheduleEntry } from './schedule.ts';
 
 export interface IdOccurrence {
   day: number;

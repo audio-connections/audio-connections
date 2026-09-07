@@ -14,7 +14,7 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Plugin } from 'vite';
-import { findProximityWarnings, scheduledDates } from '../src/puzzles.proximity';
+import { findProximityWarnings, scheduledDates } from '../src/puzzles.proximity.ts';
 
 interface Options {
   /** Warn if the same iTunes id appears in two puzzles within this many days. */

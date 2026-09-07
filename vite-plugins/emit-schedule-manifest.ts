@@ -9,8 +9,8 @@ import { readdirSync } from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { join } from 'node:path';
 import type { Plugin } from 'vite';
-import type { PuzzleContent } from '../src/types';
-import { LAUNCH_EPOCH, idFromSlug, resolve, schedule } from '../src/schedule';
+import type { PuzzleContent } from '../src/types.ts';
+import { LAUNCH_EPOCH, idFromSlug, resolve, schedule } from '../src/schedule.ts';
 
 const PUZZLE_FILE_RE = /^[a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*\.ts$/;
 const OUT_FILE = 'schedule-manifest.json';

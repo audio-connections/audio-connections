@@ -1,4 +1,4 @@
-import { test, expect, Page } from '@playwright/test';
+import { test, expect, Page } from './helpers/fixtures';
 import { puzzles } from './helpers/puzzles';
 import { APP_URL, gotoDay, gotoDayUnlocked, openPicker, groupByTheme, readTrackIds, selectIds } from './helpers/game';
 
@@ -58,24 +58,6 @@ test.describe('Audio Connections — Day 1 gameplay', () => {
     // After submit, no tile should still be in the playing state.
     await expect(page.locator('.tile.playing')).toHaveCount(0);
     await expect(page.locator('.play-btn.playing')).toHaveCount(0);
-  });
-
-  test('correct guess pulses tiles in theme color before the banner appears', async ({ page }) => {
-    const themes = groupByTheme(await readTrackIds(page));
-    const correctIds = themes.get(0)!;
-    await selectIds(page, correctIds);
-    await page.getByTestId('submit-btn').click();
-
-    // During the pulse window, the four tiles carry `matched` and
-    // `matched-theme-0` classes and the banner is not yet visible.
-    const pulsedTiles = page.locator('.tile.matched-theme-0');
-    await expect(pulsedTiles).toHaveCount(4);
-    for (const id of correctIds) {
-      await expect(page.locator(`[data-testid="tile-${id}"]`)).toHaveClass(/matched/);
-    }
-    // After the pulse, the banner appears and the matched class is gone.
-    await expect(page.getByTestId('solved-row-0')).toBeVisible();
-    await expect(page.locator('.tile.matched')).toHaveCount(0);
   });
 
   test('an incorrect group costs a mistake and shows status', async ({ page }) => {
@@ -179,6 +161,33 @@ test.describe('Audio Connections — Day 1 gameplay', () => {
     await page.getByTestId('day-chip-1').click();
     await expect(page.getByTestId('solved-row-1')).toBeVisible();
     expect(await domOrder()).toEqual(expected);
+  });
+});
+
+test.describe('Audio Connections — solve animation', () => {
+  // The suite runs with reduced motion (1ms pulse/exit) for speed; this test
+  // is about the animation itself, so it opts back into real durations (see helpers/fixtures.ts).
+  test.use({ realMotion: true });
+
+  test('correct guess pulses tiles in theme color before the banner appears', async ({ page }) => {
+    await gotoDay(page, 1);
+    const themes = groupByTheme(await readTrackIds(page));
+    const correctIds = themes.get(0)!;
+    await selectIds(page, correctIds);
+    await page.getByTestId('submit-btn').click();
+
+    // During the pulse window, the four tiles carry `matched` and
+    // `matched-theme-0` classes and the banner is not yet visible.
+    // One assertion for all four tiles — checking them one locator at a time
+    // could outlast the pulse window on a loaded machine.
+    const pulsedTiles = page.locator('.tile.matched.matched-theme-0');
+    await expect(pulsedTiles).toHaveCount(4);
+    expect(
+      (await pulsedTiles.evaluateAll((els) => els.map((el) => Number((el as HTMLElement).dataset.trackId)))).sort(),
+    ).toEqual([...correctIds].sort());
+    // After the pulse, the banner appears and the matched class is gone.
+    await expect(page.getByTestId('solved-row-0')).toBeVisible();
+    await expect(page.locator('.tile.matched')).toHaveCount(0);
   });
 });
 
@@ -444,6 +453,10 @@ test.describe('Audio Connections — persistence & reset', () => {
   });
 
   test('confirm state auto-cancels after timeout (no double-click within window)', async ({ page }) => {
+    // Fake timers so the 3s confirm window can be skipped instead of waited
+    // out. The clock keeps ticking in real time after install; fastForward
+    // just jumps it ahead.
+    await page.clock.install();
     await gotoDay(page, 1);
     const themes = groupByTheme(await readTrackIds(page));
     await selectIds(page, themes.get(0)!.slice(0, 2));
@@ -452,8 +465,9 @@ test.describe('Audio Connections — persistence & reset', () => {
     await resetBtn.click();
     await expect(resetBtn).toHaveText('Confirm Erase');
 
-    // Wait long enough for the 3s confirm window to lapse.
-    await expect(resetBtn).toHaveText('Erase Tape', { timeout: 5000 });
+    // Jump past the 3s confirm window.
+    await page.clock.fastForward(3100);
+    await expect(resetBtn).toHaveText('Erase Tape');
     // Selection should still be intact since reset never fired.
     await expect(page.getByTestId('submit-btn')).toContainText('SUBMIT 2/4');
   });

@@ -1,4 +1,4 @@
-import { test, expect, devices } from '@playwright/test';
+import { test, expect, devices } from './helpers/fixtures';
 import { gotoDay, groupByTheme, readTrackIds } from './helpers/game';
 
 // Pixel 5 (393×851) gives a representative narrow-mobile viewport while

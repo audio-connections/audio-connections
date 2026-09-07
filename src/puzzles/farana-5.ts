@@ -13,7 +13,7 @@ const puzzle: PuzzleContent = {
     {
       theme: 'Russian Artists',
       tracks: [
-        { id: 1488643157, artist: 'Ruki Vverh!', title: 'Песенка', note: '' },
+        { id: 1068942612, artist: 'Ruki Vverh!', title: 'Студент', note: '' },
         { id: 1652031569, artist: 'Ivan Surzhikov', title: 'Коробе́йники', note: '' },
         { id: 1440812146, artist: 't.A.T.u', title: 'All the Things She Said', note: '' },
         { id: 1178733242, artist: 'VITAS ', title: '7-элемент', note: '' },

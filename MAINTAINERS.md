@@ -18,6 +18,14 @@ npm run test:past-days
 
 These checks catch file shape, required fields, duplicate track IDs, duplicate category labels, exact duplicate artist/title pairs, iTunes song validity, and released-day movement.
 
+Then run the cross-puzzle reuse check:
+
+```sh
+npm run check:reuse
+```
+
+It lists every category label repeated within 45 days, every iTunes id or song repeated within 14 days, and every artist repeated within 7 days — only for pairs whose later side is still future-dated or unscheduled, so released history never shows up. A backlog puzzle has no date, so it is measured from the day after the last scheduled date, the earliest slot it could take. The category, id and song warnings also print in the terminal when `npm run dev` or `npm run build` starts; artist repeats, the least harmful kind, only appear in this script. The output names future days and categories, so it is a maintainer tool, not something to paste back to a submitter verbatim.
+
 If a check fails, stop the review and ask the submitter to fix the failing test output. Do not do the LLM merge-quality review until the puzzle is mechanically valid.
 
 ### 2. Do Merge-Quality Review

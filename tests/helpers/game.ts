@@ -33,12 +33,27 @@ export async function selectIds(page: Page, ids: number[]): Promise<void> {
   }
 }
 
-/** Switch to a specific day so tests are independent of the host clock. */
+/** Switch to a specific day so tests are independent of the host clock.
+ *  Seeds the app's own "current day" key before load so a fresh day lands
+ *  directly, without a picker round-trip; falls back to the picker when the
+ *  cold-load rule sends us elsewhere (a finished saved day jumps to the
+ *  latest fresh puzzle — see dayState.pickInitialDayIndex). */
 export async function gotoDay(page: Page, day: number): Promise<void> {
+  await page.addInitScript((d: number) => {
+    try {
+      localStorage.setItem('audio-connections:currentDay', String(d));
+    } catch {
+      /* storage disabled — the picker fallback below still works */
+    }
+  }, day);
   await page.goto(APP_URL);
-  await openPicker(page);
-  await page.getByTestId(`day-chip-${day}`).click();
-  await expect(page.getByTestId('puzzle-heading')).toHaveText(`Audio Connections ${day}`);
+  const heading = page.getByTestId('puzzle-heading');
+  await expect(heading).toHaveText(/^Audio Connections \d+$/);
+  if ((await heading.textContent()) !== `Audio Connections ${day}`) {
+    await openPicker(page);
+    await page.getByTestId(`day-chip-${day}`).click();
+  }
+  await expect(heading).toHaveText(`Audio Connections ${day}`);
   await expect(page.getByTestId('grid')).toBeVisible();
   await expect(page.locator('.tile')).toHaveCount(16);
 }

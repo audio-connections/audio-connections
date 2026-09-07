@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect, type Page } from './helpers/fixtures';
 import { APP_URL, openPicker } from './helpers/game';
 
 // End-to-end coverage for the save/restore flow. The transfer + backup

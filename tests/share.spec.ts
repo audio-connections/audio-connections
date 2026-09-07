@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect, type Page } from './helpers/fixtures';
 import { gotoDay, groupByTheme, readTrackIds, selectIds } from './helpers/game';
 
 async function winDay(page: Page): Promise<void> {

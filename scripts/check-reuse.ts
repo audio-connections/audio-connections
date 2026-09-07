@@ -1,6 +1,7 @@
 // check:reuse — list every cross-puzzle reuse a maintainer can still act on:
-// the same category label at any distance, the same iTunes id or song within
-// two weeks, the same artist within a week. Pairs whose later side has already
+// the same category label within 45 days, the same iTunes id or song within
+// two weeks, the same artist within a week. A backlog puzzle is measured from
+// the earliest slot it could take. Pairs whose later side has already
 // released are frozen history and not shown; a backlog puzzle counts as "later"
 // for the category check.
 //
@@ -25,7 +26,7 @@ const warnings = findReuseWarnings(files, scheduledDates(), ALL ? {} : { today: 
 
 const ORDER: ReuseKind[] = ['theme', 'id', 'song', 'artist'];
 const TITLE: Record<ReuseKind, string> = {
-  theme: 'Category reused (any distance)',
+  theme: 'Category reused within 45 days',
   id: 'iTunes id reused within 14 days',
   song: 'Same song under a different id within 14 days',
   artist: 'Artist reused within 7 days',

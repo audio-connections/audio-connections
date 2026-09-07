@@ -91,7 +91,7 @@ const dates = new Map([
 ]);
 
 describe('findReuseWarnings', () => {
-  it('flags a repeated category at any distance', () => {
+  it('flags a repeated category inside the 45-day window', () => {
     const w = findReuseWarnings(
       new Map([
         ['a-1', content([['Songs about rain', [[1, 'X', 'A']]]])],
@@ -105,7 +105,20 @@ describe('findReuseWarnings', () => {
     expect(w[0]!.gap).toBe(22);
   });
 
-  it('includes backlog puzzles in the category check, with no gap', () => {
+  it('lets a category come back after the window', () => {
+    const far = new Map([
+      ['a-1', { day: 1, date: '2026-05-10' }],
+      ['b-1', { day: 2, date: '2026-06-24' }], // 45 days later
+    ]);
+    const files = new Map([
+      ['a-1', content([['Rain', [[1, 'X', 'A']]]])],
+      ['b-1', content([['Rain', [[2, 'Y', 'B']]]])],
+    ]);
+    expect(findReuseWarnings(files, far)).toHaveLength(0);
+    expect(findReuseWarnings(files, far, { themeWarnDays: 46 })).toHaveLength(1);
+  });
+
+  it('measures a backlog puzzle from the day after the last scheduled date', () => {
     const w = findReuseWarnings(
       new Map([
         ['a-1', content([['Colors', [[1, 'X', 'A']]]])],
@@ -115,11 +128,37 @@ describe('findReuseWarnings', () => {
       dates,
     );
     // "Colors" vs "Colours" is a different key (no fuzzy spelling), so only
-    // ghost2 collides with a-1 — reported once, backlog side as `cur`.
+    // ghost2 collides with a-1 — reported once, backlog side as `cur`, with
+    // the gap to its earliest slot (2026-06-02, the day after a-3).
     expect(w).toHaveLength(1);
     expect(w[0]!.cur.slug).toBe('ghost2');
     expect(w[0]!.cur.day).toBeUndefined();
-    expect(w[0]!.gap).toBeNull();
+    expect(w[0]!.cur.earliestDate).toBe('2026-06-02');
+    expect(w[0]!.gap).toBe(23);
+  });
+
+  it('stays quiet about a backlog puzzle whose earliest slot is already outside the window', () => {
+    const w = findReuseWarnings(
+      new Map([
+        ['a-1', content([['Colors', [[1, 'X', 'A']]]])],
+        ['ghost', content([['Colors', [[9, 'Z', 'Q']]]])],
+      ]),
+      dates,
+      { themeWarnDays: 20 }, // earliest slot is 23 days after a-1
+    );
+    expect(w).toHaveLength(0);
+  });
+
+  it('flags two backlog puzzles that share a category', () => {
+    const w = findReuseWarnings(
+      new Map([
+        ['ghost', content([['Colors', [[1, 'X', 'A']]]])],
+        ['ghost2', content([['Colors', [[9, 'Z', 'Q']]]])],
+      ]),
+      dates,
+    );
+    expect(w).toHaveLength(1);
+    expect(w[0]!.gap).toBe(0);
   });
 
   it('flags an id reused within the window, once, not again as a song', () => {
@@ -227,7 +266,7 @@ describe('formatReuseWarning', () => {
       dates,
     );
     expect(formatReuseWarning(w[0]!)).toBe(
-      'category "Rain" Day 1 (2026-05-10, a-1.ts) → "Rain" backlog (ghost.ts)',
+      'category "Rain" Day 1 (2026-05-10, a-1.ts) → "Rain" backlog (ghost.ts), at least 23 day(s) apart (earliest slot 2026-06-02)',
     );
   });
 });

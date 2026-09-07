@@ -23,7 +23,7 @@ npm run test:itunes:all Full-fleet iTunes sweep for maintainer/catalog drift che
 npm test               Playwright end-to-end. ~30-60s. Boots dev server, drives Chromium.
 npm run validate       Composite for puzzle authors: npm run typecheck + test:unit + test:itunes + test:past-days.
 npm run test:past-days Fails if you moved an already-released puzzle (reorder/rename/re-date). Diffs against origin/main.
-npm run check:reuse   Maintainer-only. Lists cross-puzzle reuse still worth acting on: a category label repeated anywhere, an iTunes id or song within 14 days, an artist within 7. Names future days, so not part of validate.
+npm run check:reuse   Maintainer-only. Lists cross-puzzle reuse still worth acting on: a category label repeated within 45 days, an iTunes id or song within 14 days, an artist within 7. Names future days, so not part of validate.
 npm run schedule:preview  Print the resolved schedule, backlog count, and warnings (thin runway, calendar gaps). Read-only.
 npm run backlog:preview   Print the unscheduled puzzle backlog list and scheduling next step.
 ```

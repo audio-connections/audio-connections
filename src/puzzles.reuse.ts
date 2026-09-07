@@ -2,12 +2,15 @@
 // artist, or category label turning up in two puzzles too close together.
 // PUZZLE_AUTHORS.md ranks these by how much they hurt — categories first
 // (the category is "the answer"), then songs, then artists — and the windows
-// below follow that ranking: a repeated category is flagged at any distance,
+// below follow that ranking: a repeated category is flagged within 45 days,
 // a repeated song within two weeks, a repeated artist within a week.
 //
 // Only pairs a maintainer can still act on are reported: the later occurrence
 // must be future-dated or unscheduled (backlog). Past schedule positions are
-// frozen, so warning about them is noise.
+// frozen, so warning about them is noise. A backlog puzzle has no date, so for
+// the category check it is measured from the earliest slot it could take —
+// the day after the last scheduled date — and flagged only when even that
+// soonest placement would land inside the window.
 //
 // This module is loader-free so it can be unit-tested; vite-plugins/
 // check-puzzles.ts and scripts/check-reuse.ts do the file loading.
@@ -22,6 +25,10 @@ export interface ReuseOccurrence {
   /** Absent for a backlog puzzle (valid file, not on the calendar). */
   day?: number;
   date?: string;
+  /** For a backlog puzzle: the earliest calendar slot it could take (the day
+   *  after the last scheduled date). Gaps to a backlog side are measured from
+   *  here, so they are minimums. */
+  earliestDate?: string;
   /** The value as written at this site (artist, "artist — title", or the
    *  category label) so the message can quote it verbatim. */
   label: string;
@@ -33,7 +40,9 @@ export interface ReuseWarning {
   key: string;
   prev: ReuseOccurrence;
   cur: ReuseOccurrence;
-  /** Whole days between the two uses; null when either side is unscheduled. */
+  /** Whole days between the two uses. When `cur` is a backlog puzzle this is
+   *  the minimum — measured to its earliest possible slot. Null only when the
+   *  schedule is empty and no slot can be derived. */
   gap: number | null;
 }
 
@@ -44,7 +53,8 @@ export interface ReuseOptions {
   songWarnDays?: number;
   /** Same normalized artist within this window. */
   artistWarnDays?: number;
-  /** Same normalized category label within this window. Infinity = any distance. */
+  /** Same normalized category label within this window. Backlog puzzles are
+   *  measured from their earliest possible slot. */
   themeWarnDays?: number;
   /** ISO date (UTC). Pairs whose later occurrence is on or before this date are
    *  historical and suppressed. Omit to report every pair. */
@@ -55,7 +65,7 @@ export const DEFAULT_REUSE_OPTIONS: Required<Omit<ReuseOptions, 'today'>> = {
   idWarnDays: 14,
   songWarnDays: 14,
   artistWarnDays: 7,
-  themeWarnDays: Number.POSITIVE_INFINITY,
+  themeWarnDays: 45,
 };
 
 /* ── Normalizers ─────────────────────────────────────────────────────── */
@@ -129,12 +139,24 @@ function daysBetween(a: string, b: string): number {
   return Math.round((new Date(b).getTime() - new Date(a).getTime()) / 86_400_000);
 }
 
-/** Unscheduled sites sort after every dated one, then by slug, so `cur` is
- *  always the side a maintainer would move. */
+function addDays(date: string, n: number): string {
+  return new Date(new Date(date).getTime() + n * 86_400_000).toISOString().slice(0, 10);
+}
+
+/** The date a site is measured at: its real date, or for a backlog puzzle the
+ *  earliest slot it could take. */
+function effectiveDate(s: Site): string | undefined {
+  return s.date ?? s.earliestDate;
+}
+
+/** Dated sites in calendar order; backlog sites (at the horizon) sort after
+ *  every dated one, then by slug, so `cur` is always the side a maintainer
+ *  would move. */
 function compareSites(a: Site, b: Site): number {
-  if (a.date && b.date) return a.date.localeCompare(b.date) || a.slug.localeCompare(b.slug);
-  if (a.date) return -1;
-  if (b.date) return 1;
+  const da = effectiveDate(a);
+  const db = effectiveDate(b);
+  if (da && db && da !== db) return da.localeCompare(db);
+  if (!!a.date !== !!b.date) return a.date ? -1 : 1;
   return a.slug.localeCompare(b.slug);
 }
 
@@ -153,7 +175,9 @@ function collect(
       const cur = sorted[i]!;
       if (prev.slug === cur.slug) continue; // within-file dupes are the data test's job
       if (kind === 'song' && prev.id !== undefined && prev.id === cur.id) continue;
-      const gap = prev.date && cur.date ? daysBetween(prev.date, cur.date) : null;
+      const dp = effectiveDate(prev);
+      const dc = effectiveDate(cur);
+      const gap = dp && dc ? daysBetween(dp, dc) : null;
       if (gap !== null && gap >= warnDays) continue;
       if (today && cur.date && cur.date <= today) continue;
       const { id: _p, ...prevOcc } = prev;
@@ -166,13 +190,18 @@ function collect(
 /** Find every reuse a maintainer can still act on. `contentBySlug` holds
  *  every puzzle file (scheduled or not); `dates` maps the scheduled ones to
  *  their derived day/date. Backlog puzzles take part in the category check
- *  only — the other kinds need a date to measure a gap. Pure. */
+ *  only, measured from the day after the last scheduled date — the other
+ *  kinds are about hearing the same thing twice in a short span, which
+ *  needs a real date. Pure. */
 export function findReuseWarnings(
   contentBySlug: ReadonlyMap<string, PuzzleContent>,
   dates: ReadonlyMap<string, ScheduledDate>,
   options: ReuseOptions = {},
 ): ReuseWarning[] {
   const opts = { ...DEFAULT_REUSE_OPTIONS, ...options };
+  let last: string | undefined;
+  for (const { date } of dates.values()) if (!last || date > last) last = date;
+  const horizon = last ? addDays(last, 1) : undefined;
   const byId = new Map<string, Site[]>();
   const bySong = new Map<string, Site[]>();
   const byArtist = new Map<string, Site[]>();
@@ -185,7 +214,11 @@ export function findReuseWarnings(
 
   for (const [slug, content] of contentBySlug) {
     const when = dates.get(slug);
-    const base = { slug, file: `${slug}.ts`, ...(when ? { day: when.day, date: when.date } : {}) };
+    const base = {
+      slug,
+      file: `${slug}.ts`,
+      ...(when ? { day: when.day, date: when.date } : horizon ? { earliestDate: horizon } : {}),
+    };
     for (const theme of content.themes) {
       push(byTheme, normalizeTheme(theme.theme), { ...base, label: theme.theme });
       if (!when) continue;
@@ -213,7 +246,12 @@ function where(o: ReuseOccurrence): string {
 }
 
 export function formatReuseWarning(w: ReuseWarning): string {
-  const apart = w.gap === null ? '' : `, ${w.gap} day(s) apart`;
+  const apart =
+    w.gap === null
+      ? ''
+      : w.cur.day === undefined
+        ? `, at least ${w.gap} day(s) apart (earliest slot ${w.cur.earliestDate})`
+        : `, ${w.gap} day(s) apart`;
   switch (w.kind) {
     case 'theme':
       return `category "${w.prev.label}" ${where(w.prev)} → "${w.cur.label}" ${where(w.cur)}${apart}`;

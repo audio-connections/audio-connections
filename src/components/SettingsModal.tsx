@@ -3,11 +3,19 @@ import { applyBackup, collectBackup } from '../backup';
 import { decodeBackup, encodeBackup } from '../transfer';
 import type { Stats } from '../stats';
 import { StatsCard } from './StatsCard';
+import { SHARE_STYLES, type ShareStyle } from './shareText';
 
 interface SettingsModalProps {
   onClose: () => void;
   stats: Stats;
+  shareStyle: ShareStyle;
+  onShareStyleChange: (style: ShareStyle) => void;
 }
+
+const SHARE_STYLE_COPY: Record<ShareStyle, { label: string; hint: string }> = {
+  simple: { label: 'Simple', hint: 'Title and the emoji grid. Wordle-style.' },
+  detailed: { label: 'Detailed', hint: 'Adds the date, your result, and a link to the game.' },
+};
 
 type ExportState = 'idle' | 'copied' | 'failed';
 type ImportPhase =
@@ -15,7 +23,7 @@ type ImportPhase =
   | { kind: 'error'; message: string }
   | { kind: 'confirm'; incomingCount: number; b64: string };
 
-export function SettingsModal({ onClose, stats }: SettingsModalProps) {
+export function SettingsModal({ onClose, stats, shareStyle, onShareStyleChange }: SettingsModalProps) {
   const [exportState, setExportState] = useState<ExportState>('idle');
   const [importText, setImportText] = useState('');
   const [importPhase, setImportPhase] = useState<ImportPhase>({ kind: 'idle' });
@@ -88,6 +96,26 @@ export function SettingsModal({ onClose, stats }: SettingsModalProps) {
           ) : (
             <StatsCard stats={stats} />
           )}
+        </section>
+
+        <section className="settings-section">
+          <h3>Share style</h3>
+          <div className="settings-segmented" role="radiogroup" aria-label="Share style">
+            {SHARE_STYLES.map((style) => (
+              <button
+                key={style}
+                type="button"
+                role="radio"
+                aria-checked={shareStyle === style}
+                className={`settings-segment${shareStyle === style ? ' active' : ''}`}
+                onClick={() => onShareStyleChange(style)}
+                data-testid={`share-style-${style}`}
+              >
+                {SHARE_STYLE_COPY[style].label}
+              </button>
+            ))}
+          </div>
+          <p className="settings-hint">{SHARE_STYLE_COPY[shareStyle].hint}</p>
         </section>
 
         <section className="settings-section">

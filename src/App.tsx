@@ -1,7 +1,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { puzzles, MAX_MISTAKES, isReleased, latestReleasedIndex } from './puzzles';
 import { compareReleasedSchedule, fetchScheduleManifest } from './scheduleFreshness';
-import { loadCurrentDay, saveCurrentDay, loadIntroSeenVersion, saveIntroSeenVersion } from './storage';
+import {
+  loadCurrentDay,
+  saveCurrentDay,
+  loadIntroSeenVersion,
+  saveIntroSeenVersion,
+  loadShareStyle,
+  saveShareStyle,
+} from './storage';
+import { DEFAULT_SHARE_STYLE, isShareStyle, type ShareStyle } from './components/shareText';
 import { deriveDayState, deriveDayStates, pickInitialDayIndex } from './dayState';
 import { formatPuzzleDate } from './format';
 import { computeStats } from './stats';
@@ -111,6 +119,16 @@ export function App() {
   const [showConstraintModal, setShowConstraintModal] = useState(false);
   const dismissConstraintModal = useCallback(() => setShowConstraintModal(false), []);
   const [showSettings, setShowSettings] = useState(false);
+  // Share-text format preference (Settings → Share style). Persisted so it
+  // survives reloads; unknown stored values fall back to the default.
+  const [shareStyle, setShareStyle] = useState<ShareStyle>(() => {
+    const stored = loadShareStyle();
+    return isShareStyle(stored) ? stored : DEFAULT_SHARE_STYLE;
+  });
+  const changeShareStyle = useCallback((style: ShareStyle) => {
+    saveShareStyle(style);
+    setShareStyle(style);
+  }, []);
   // Track id whose note is being edited in the mobile NoteSheet (null = closed).
   const [editingTileId, setEditingTileId] = useState<number | null>(null);
   /** Days unlocked at runtime — by Konami (all of them) or by the countdown
@@ -356,7 +374,14 @@ export function App() {
       {showConstraintModal && puzzle.constraint && (
         <ConstraintModal constraint={puzzle.constraint} onDismiss={dismissConstraintModal} />
       )}
-      {showSettings && <SettingsModal onClose={() => setShowSettings(false)} stats={stats} />}
+      {showSettings && (
+        <SettingsModal
+          onClose={() => setShowSettings(false)}
+          stats={stats}
+          shareStyle={shareStyle}
+          onShareStyleChange={changeShareStyle}
+        />
+      )}
       {editingTileId !== null && (() => {
         const track = session.state.tracks.find((t) => t.id === editingTileId);
         if (!track) return null;
@@ -508,6 +533,7 @@ export function App() {
                 author={puzzle.author}
                 date={dateText}
                 stats={stats}
+                shareStyle={shareStyle}
               />
             )}
             <Grid

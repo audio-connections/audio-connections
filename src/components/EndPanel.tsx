@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import type { Guess } from '../types';
 import { buildShareText } from './shareText';
+import type { Stats } from '../stats';
+import { StatsCard } from './StatsCard';
 
 interface EndPanelProps {
   won: boolean;
@@ -8,6 +10,8 @@ interface EndPanelProps {
   guessHistory: Guess[];
   author: string;
   date: string;
+  /** Lifetime record, already including this day's result. */
+  stats: Stats;
 }
 
 type CopyState = 'idle' | 'copied' | 'failed';
@@ -18,7 +22,7 @@ const COPY_LABEL: Record<CopyState, string> = {
   failed: 'Copy failed — select text manually',
 };
 
-export function EndPanel({ won, day, guessHistory, author, date }: EndPanelProps) {
+export function EndPanel({ won, day, guessHistory, author, date, stats }: EndPanelProps) {
   const [copyState, setCopyState] = useState<CopyState>('idle');
   // A record without guessHistory came from the editor (or a future schema
   // that didn't carry it). The emoji grid and the per-side recovery count
@@ -83,6 +87,10 @@ export function EndPanel({ won, day, guessHistory, author, date }: EndPanelProps
           </button>
         </>
       )}
+      <section className="end-stats" aria-label="Your record">
+        <h3 className="end-stats-title">Your record</h3>
+        <StatsCard stats={stats} />
+      </section>
       <div className="end-runout" aria-hidden="true">
         {runout}
       </div>

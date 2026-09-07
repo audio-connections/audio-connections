@@ -3539,3 +3539,101 @@ h1 {
 .editor-pill--on { background: var(--text-engraved); color: var(--text-primary); border-color: var(--text-engraved); }
 .editor-pill--won.editor-pill--on { background: #4a6b3a; border-color: #4a6b3a; color: #eef3e2; }
 .editor-pill--lost.editor-pill--on { background: #6e3a35; border-color: #6e3a35; color: #f3e2e0; }
+
+/* ── StatsCard — lifetime record. Color-neutral: inherits from its host so
+   the same markup reads on the paper j-card and the dark Settings chassis. */
+.end-stats {
+  position: relative;
+  z-index: 1;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--paper-rule);
+}
+.end-stats-title {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--paper-ink-soft);
+  margin: 0 0 10px;
+}
+.stats-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 14px 22px;
+  align-items: start;
+  font-family: var(--font-mono);
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px 8px;
+  margin: 0;
+}
+.stats-grid div { min-width: 0; }
+.stats-grid dt {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  white-space: nowrap;
+}
+.stats-grid dd {
+  margin: 2px 0 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 26px;
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+.stats-dist-title {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  margin-bottom: 6px;
+}
+.stats-dist-row {
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr) 24px;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.stats-dist-label { text-align: center; opacity: 0.8; }
+/* Track is a faint currentColor wash (via ::before so the solid bar on top
+   isn't dimmed with it); bar width is the row's share of the tallest bucket. */
+.stats-dist-track {
+  display: block;
+  height: 10px;
+  border-radius: 1px;
+  position: relative;
+}
+.stats-dist-track::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: currentColor;
+  opacity: 0.12;
+  border-radius: 1px;
+}
+.stats-dist-bar {
+  position: absolute;
+  inset: 0 auto 0 0;
+  display: block;
+  background: currentColor;
+  border-radius: 1px;
+  min-width: 2px;
+}
+.stats-dist-row--loss .stats-dist-bar { opacity: 0.55; }
+.stats-dist-count { text-align: right; font-variant-numeric: tabular-nums; }
+@media (max-width: 480px) {
+  .stats-card { grid-template-columns: 1fr; }
+}
+/* Settings host: same component, dark chassis palette. */
+.settings-card .stats-card { color: var(--text-primary); }
+.settings-card .stats-grid dt,
+.settings-card .stats-dist-title { color: var(--text-secondary); opacity: 1; }

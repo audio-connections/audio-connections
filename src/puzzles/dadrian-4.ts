@@ -2,7 +2,7 @@ import type { PuzzleContent } from '../types';
 
 const puzzle: PuzzleContent = {
   author: 'David Adrian',
-  constraint: 'TV over the years',
+  constraint: 'TV over the decades',
   themes: [
     {
       theme: '2010s',
@@ -35,7 +35,7 @@ const puzzle: PuzzleContent = {
       theme: '80s',
       tracks: [
         { id: 7197543, artist: 'Gary Portnoy', title: 'Where Everybody Knows Your Name', note: 'Cheers (1982-1993)' },
-        { id: 1455252355, artist: 'Carly Rae Jepsen', title: 'Everywhere You Look', note: 'Full House [cover of Jesse Frederick] (1987-1995)' },
+        { id: 1483957730, artist: 'The Superstation', title: 'Everywhere You Look', note: 'Full House [cover of Jesse Frederick] (1987-1995)' },
         { id: 497246623, artist: 'Andrew Gold', title: 'Thank You for Being a Friend', note: 'Golden Girls (1985-1992)' },
         { id: 302076273, artist: 'B.J. Thomas', title: 'As Long As We Got Each Other', note: 'Growing Pains (1985-1992)' },
       ],

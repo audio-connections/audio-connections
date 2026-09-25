@@ -315,6 +315,10 @@ export const schedule: PinnedScheduleEntry[] = [
   { slug: 'robchahin-8', date: '2026-09-24' },
   { slug: 'klobucar-29', date: '2026-09-25' },
   { slug: 'klobucar-32', date: '2026-09-26' },
+  { slug: 'gitblight1-6', date: '2026-09-27' },
+  { slug: 'klobucar-33', date: '2026-09-28' },
+  { slug: 'dadrian-3', date: '2026-09-29' },
+  { slug: 'thomas-7', date: '2026-09-30' },
 ];
 
 /** Slugs for puzzle files that exist but are not scheduled yet. These are

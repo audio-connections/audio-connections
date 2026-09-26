@@ -6,7 +6,7 @@ const puzzle: PuzzleContent = {
     {
       theme: '"Radio" in the title',
       tracks: [
-        { id: 1440651297, artist: 'Queen', title: 'Radio Ga Ga' },
+        { id: 6781077464, artist: 'Queen', title: 'Radio Ga Ga' },
         { id: 1444090128, artist: 'The Buggles', title: 'Video Killed the Radio Star' },
         { id: 1585423388, artist: 'Elvis Costello & The Attractions', title: 'Radio, Radio' },
         { id: 1358795530, artist: 'Donna Summer', title: 'On the Radio' },

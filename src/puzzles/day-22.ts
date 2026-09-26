@@ -8,7 +8,7 @@ const puzzle: PuzzleContent = {
       tracks: [
         { id: 1440912993, artist: 'Elton John', title: "I'm Still Standing" },
         { id: 1440936016, artist: 'Taylor Swift', title: 'Shake It Off' },
-        { id: 1440806739, artist: 'Queen', title: 'Under Pressure' },
+        { id: 6781075466, artist: 'Queen', title: 'Under Pressure' },
         { id: 192678693, artist: 'Leonard Cohen', title: 'Hallelujah' },
       ],
     },

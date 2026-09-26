@@ -15,7 +15,7 @@ const puzzle: PuzzleContent = {
     {
       theme: 'Famous duets',
       tracks: [
-        { id: 1440810475, artist: 'Queen & David Bowie', title: 'Under Pressure' },
+        { id: 1676422878, artist: 'Queen & David Bowie', title: 'Under Pressure' },
         { id: 1440913387, artist: 'Elton John & Kiki Dee', title: "Don't Go Breaking My Heart" },
         { id: 282883594, artist: 'Dolly Parton & Kenny Rogers', title: 'Islands in the Stream' },
         { id: 1443906384, artist: 'Ethel Merman & Ray Middleton', title: 'Anything You Can Do' },

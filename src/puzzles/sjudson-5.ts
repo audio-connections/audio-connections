@@ -41,7 +41,7 @@ const puzzle: PuzzleContent = {
       theme: 'Demolished But Not Forgotten (pre-July 12, 1979 hits)',
       tracks: [
         { id: 301649381, artist: 'Chic', title: 'Le Freak', note: '' },
-        { id: 1425179375, artist: 'Donna Summer', title: 'Bad Girls', note: '' },
+        { id: 6793735691, artist: 'Donna Summer', title: 'Bad Girls', note: '' },
         { id: 523223725, artist: 'Earth, Wind & Fire with The Emotions', title: 'Boogie Wonderland', note: '' },
         { id: 1445668685, artist: 'Kool & The Gang', title: 'Open Sesame', note: '' },
       ],

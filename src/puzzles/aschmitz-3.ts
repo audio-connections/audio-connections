@@ -17,7 +17,7 @@ const puzzle: PuzzleContent = {
       theme: 'HTTP 402: Payment Required',
       tracks: [
         { id: 469302953, artist: 'Aloe Blacc', title: 'I Need a Dollar' },
-        { id: 1443196867, artist: 'Donna Summer', title: 'She Works Hard For the Money' },
+        { id: 192955365, artist: 'Donna Summer', title: 'She Works Hard For the Money' },
         { id: 1441164799, artist: 'The Beatles', title: 'Taxman' },
         { id: 194949982, artist: 'Bruce Springsteen', title: 'Pay Me My Money Down' },
       ],

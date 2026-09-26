@@ -36,7 +36,7 @@ const puzzle: PuzzleContent = {
         { id: 1485042250, artist: 'Bad Religion', title: 'Atomic Garden', note: 'Greg Graffin earned a PhD in Zoology from Cornell University' },
         { id: 1485034811, artist: 'The Offspring', title: 'Self Esteem', note: 'Dexter Holland earned a PhD in Molecular Biology from USC' },
         { id: 1614602775, artist: 'Descendents', title: 'Hope', note: 'Milo Aukerman earned a PhD in Biochemistry from UC San Diego' },
-        { id: 1440770302, artist: 'Queen', title: 'Fat Bottomed Girls', note: 'Brian May earned a PhD in Astrophysics from Imperial College London' },
+        { id: 6781076105, artist: 'Queen', title: 'Fat Bottomed Girls', note: 'Brian May earned a PhD in Astrophysics from Imperial College London' },
       ],
     },
   ],

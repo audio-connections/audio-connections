@@ -16,7 +16,7 @@ const puzzle: PuzzleContent = {
     {
       theme: 'Artist name is a nobility title',
       tracks: [
-        { id: 1440754725, artist: 'Queen', title: 'Procession' },
+        { id: 6781078976, artist: 'Queen', title: 'Procession' },
         { id: 1434900735, artist: 'Count Basie', title: "One O'Clock Jump" },
         { id: 199336114, artist: 'Duke Ellington', title: "Take the 'A' Train" },
         { id: 1442400732, artist: 'Earl Sweatshirt', title: 'Riot!' },

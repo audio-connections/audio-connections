@@ -17,7 +17,7 @@ const puzzle: PuzzleContent = {
       tracks: [
         { id: 723675471, artist: 'Iggy Pop', title: 'Candy', note: 'A duet with Kate Pierson of the B-52’s.' },
         { id: 1005850935, artist: 'Philip Bailey', title: 'Easy Lover', note: 'Philip Bailey of Earth, Wind & Fire, in a duet with Phil Collins.' },
-        { id: 1440810475, artist: 'Queen', title: 'Under Pressure', note: 'A duet between Queen and David Bowie.' },
+        { id: 1676422878, artist: 'Queen', title: 'Under Pressure', note: 'A duet between Queen and David Bowie.' },
         { id: 1558235412, artist: 'The Jacksons', title: 'State of Shock', note: 'Michael Jackson trading verses with Mick Jagger.' },
       ],
     },

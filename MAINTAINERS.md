@@ -11,9 +11,9 @@ For a PR that adds or changes one or more files in `src/puzzles/`, review in thi
 Before spending LLM tokens or doing semantic review, run the normal puzzle checks:
 
 ```sh
-npm run test:unit
-npm run test:itunes
-npm run test:past-days
+pnpm run test:unit
+pnpm run test:itunes
+pnpm run test:past-days
 ```
 
 These checks catch file shape, required fields, duplicate track IDs, duplicate category labels, exact duplicate artist/title pairs, iTunes song validity, and released-day movement.
@@ -21,10 +21,10 @@ These checks catch file shape, required fields, duplicate track IDs, duplicate c
 Then run the cross-puzzle reuse check:
 
 ```sh
-npm run check:reuse
+pnpm run check:reuse
 ```
 
-It lists every category label repeated within 45 days, every iTunes id or song repeated within 14 days, and every artist repeated within 7 days — only for pairs whose later side is still future-dated or unscheduled, so released history never shows up. A backlog puzzle has no date, so it is measured from the day after the last scheduled date, the earliest slot it could take. The category, id and song warnings also print in the terminal when `npm run dev` or `npm run build` starts; artist repeats, the least harmful kind, only appear in this script. The output names future days and categories, so it is a maintainer tool, not something to paste back to a submitter verbatim.
+It lists every category label repeated within 45 days, every iTunes id or song repeated within 14 days, and every artist repeated within 7 days — only for pairs whose later side is still future-dated or unscheduled, so released history never shows up. A backlog puzzle has no date, so it is measured from the day after the last scheduled date, the earliest slot it could take. The category, id and song warnings also print in the terminal when `pnpm run dev` or `pnpm run build` starts; artist repeats, the least harmful kind, only appear in this script. The output names future days and categories, so it is a maintainer tool, not something to paste back to a submitter verbatim.
 
 If a check fails, stop the review and ask the submitter to fix the failing test output. Do not do the LLM merge-quality review until the puzzle is mechanically valid.
 
@@ -51,7 +51,7 @@ Backlog puzzles are valid, accepted puzzle files that are hidden from the playab
 Use:
 
 ```sh
-npm run backlog:preview
+pnpm run backlog:preview
 ```
 
 To schedule backlog puzzles, use [Backlog Reshuffler SOP](docs/backlog-reshuffler-sop.md). That SOP explains spoiler-free reshuffling, held dates, novelty windows, confidence/severity labels, and opt-in edits to `src/schedule.ts`.
@@ -59,8 +59,8 @@ To schedule backlog puzzles, use [Backlog Reshuffler SOP](docs/backlog-reshuffle
 After applying schedule rows, run:
 
 ```sh
-npm run schedule:preview
-npm run validate
+pnpm run schedule:preview
+pnpm run validate
 ```
 
 ## CI Notes
@@ -70,4 +70,4 @@ Puzzle PR checks are also run in GitHub Actions, but maintainer review should no
 - `test:unit` is offline and fast.
 - `test:itunes` uses the iTunes API and checks changed puzzle files by default.
 - `test:past-days` protects released puzzle dates, numbers, and slugs.
-- `npm run test:itunes:all` is for deliberate full-catalog drift sweeps, not ordinary puzzle PR review.
+- `pnpm run test:itunes:all` is for deliberate full-catalog drift sweeps, not ordinary puzzle PR review.

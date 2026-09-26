@@ -1,6 +1,6 @@
 // New here? See PUZZLE_AUTHORS.md at the repo root for the full guide.
 // Copy this file to src/puzzles/<your-github-handle>-N.ts,
-// fill in the fields, then run `npm run validate` to check your work before
+// fill in the fields, then run `pnpm run validate` to check your work before
 // opening a PR. The day number and release date aren't set here — accepted
 // puzzles can sit in the backlog until a maintainer schedules them.
 

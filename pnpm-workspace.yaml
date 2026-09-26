@@ -1,0 +1,17 @@
+# Supply-chain cooldown: only install package versions that have been
+# published for at least 7 days (10080 minutes). Guards against installing
+# a freshly-compromised release. (pnpm reads project settings from
+# pnpm-workspace.yaml rather than .npmrc in pnpm v11+.)
+minimumReleaseAge: 10080
+
+# Block lifecycle scripts (preinstall / install / postinstall) from
+# every package on install. Primary attack vector for npm supply-chain
+# compromises — disabling forces any binary fetch or native rebuild
+# to be explicit.
+#
+# One package in our tree needs an out-of-band install step:
+# @playwright/test, which downloads browser binaries via its
+# postinstall. That step is wrapped in the `setup` script in
+# package.json — run `pnpm run setup` for a usable install instead
+# of bare `pnpm install`.
+ignoreScripts: true

@@ -20,13 +20,14 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 24
-          cache: npm
-      - run: npm ci
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
       - name: Unit tests (Vitest)
-        run: npm run test:unit
+        run: pnpm run test:unit
       - name: Get Playwright version
         id: pw
         run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
@@ -37,12 +38,12 @@ jobs:
           path: ~/.cache/ms-playwright
           key: pw-${{ runner.os }}-${{ steps.pw.outputs.version }}
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
+        run: pnpm exec playwright install --with-deps chromium
         if: steps.pw-cache.outputs.cache-hit != 'true'
       - name: Install Playwright system deps (cached browsers)
-        run: npx playwright install-deps chromium
+        run: pnpm exec playwright install-deps chromium
         if: steps.pw-cache.outputs.cache-hit == 'true'
-      - run: npx playwright test
+      - run: pnpm exec playwright test
       - if: failure()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
@@ -63,11 +64,12 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 24
-          cache: npm
-      - run: npm ci
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
       # Rebuild the ReplayGain wasm from its vendored Rust source so the
       # deployed artifact is provably built from source, not a trusted committed
       # binary. rustup (preinstalled on the runner) auto-installs the pinned
@@ -76,11 +78,11 @@ jobs:
       # local dev and the test job; here it's regenerated and bundled fresh.
       - name: Rebuild ReplayGain wasm from vendored Rust source
         run: |
-          npm run wasm:build
+          pnpm run wasm:build
           if ! git diff --quiet -- src/replaygain/ebur128.wasm; then
             echo "::warning::src/replaygain/ebur128.wasm differs from a fresh build of wasm/ebur128 (stale commit, or built on a different host). Deploying the freshly-built artifact."
           fi
-      - run: npm run build
+      - run: pnpm run build
       - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
         with:
           enablement: true

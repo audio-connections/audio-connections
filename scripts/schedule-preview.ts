@@ -47,7 +47,7 @@ function printBacklog(): void {
 
   console.log(`\nBacklog — ${backlog.length} unscheduled puzzle file(s):`);
   for (const slug of backlog) console.log(`  ${slug}.ts`);
-  console.log(`\nTo schedule one, add a dated row to src/schedule.ts and re-run npm run schedule:preview.\n`);
+  console.log(`\nTo schedule one, add a dated row to src/schedule.ts and re-run pnpm run schedule:preview.\n`);
 }
 
 if (BACKLOG_ONLY) {
@@ -72,7 +72,7 @@ for (const p of resolved) {
   );
 }
 
-console.log(`\nBacklog: ${backlog.length} unscheduled puzzle file(s). Run npm run backlog:preview to list.`);
+console.log(`\nBacklog: ${backlog.length} unscheduled puzzle file(s). Run pnpm run backlog:preview to list.`);
 
 const warnings = previewWarnings(resolved, TODAY);
 if (warnings.length === 0) {

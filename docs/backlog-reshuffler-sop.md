@@ -42,7 +42,7 @@ Range fill is the default high-value mode because it keeps runway healthy. Ranki
 7. Evaluate novelty using the rules below.
 8. Produce a spoiler-free proposal unless the maintainer requested details.
 9. If the maintainer asks to apply the proposal, update `src/schedule.ts` with explicit `{ slug, date }` rows.
-10. After applying rows, run or recommend `npm run schedule:preview`; before merge, run or recommend `npm run validate`.
+10. After applying rows, run or recommend `pnpm run schedule:preview`; before merge, run or recommend `pnpm run validate`.
 
 ## Novelty Rules
 
@@ -180,9 +180,9 @@ When applying:
 - Preserve held rows and their comments.
 - Do not add duplicate slugs.
 - Do not change puzzle files.
-- Run `npm run schedule:preview` after editing when possible.
+- Run `pnpm run schedule:preview` after editing when possible.
 
-Before merging, run `npm run validate`.
+Before merging, run `pnpm run validate`.
 
 ## Machine Checks
 

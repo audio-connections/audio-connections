@@ -25,7 +25,7 @@ const puzzle: PuzzleContent = {
       theme: 'Official songs or anthems of the Olympic Games',
       tracks: [
         { id: 271792484, artist: 'Gloria Estefan', title: 'Reach', note: 'Official theme song of the 1996 Summer Olympics in Atlanta' },
-        { id: 1440651890, artist: 'Freddie Mercury & Montserrat Caballé', title: 'Barcelona', note: 'Featured theme song of the 1992 Summer Olympics in Barcelona' },
+        { id: 1479599333, artist: 'Freddie Mercury & Montserrat Caballé', title: 'Barcelona', note: 'Featured theme song of the 1992 Summer Olympics in Barcelona' },
         { id: 190618991, artist: 'Céline Dion', title: 'The Power of the Dream', note: 'Commissioned and performed for the 1996 Summer Olympics opening ceremony in Atlanta' },
         { id: 21393713, artist: 'Björk', title: 'Oceania', note: 'Commissioned and performed for the 2004 Summer Olympics opening ceremony in Athens' },
       ],

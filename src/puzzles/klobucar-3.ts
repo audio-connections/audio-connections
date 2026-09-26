@@ -35,7 +35,7 @@ const puzzle: PuzzleContent = {
       tracks: [
         { id: 714905123, artist: 'Fatboy Slim', title: 'Weapon of Choice', note: 'Dune' },
         { id: 1097861770, artist: 'Radiohead', title: 'Paranoid Android', note: "The Hitchhiker's Guide to the Galaxy" },
-        { id: 1440645631, artist: 'Queen', title: 'Flash', note: 'Flash Gordon' },
+        { id: 6781023303, artist: 'Queen', title: 'Flash', note: 'Flash Gordon' },
         { id: 313873494, artist: 'Eurythmics', title: 'Sex Crime (1984)', note: "Orwell's Nineteen Eighty-Four" },
       ],
     },

@@ -8,7 +8,7 @@ const puzzle: PuzzleContent = {
       tracks: [
         { id: 411941745, artist: 'Dolly Parton', title: '9 to 5' },
         { id: 1809209397, artist: 'Loverboy', title: 'Working for the Weekend' },
-        { id: 1443196867, artist: 'Donna Summer', title: 'She Works Hard for the Money' },
+        { id: 192955365, artist: 'Donna Summer', title: 'She Works Hard for the Money' },
         { id: 295509796, artist: 'Lee Dorsey', title: 'Working in the Coal Mine' },
       ],
     },

@@ -18,7 +18,7 @@ const puzzle: PuzzleContent = {
         { id: 324127936, artist: 'Simon & Garfunkel', title: 'Cecilia' },
         { id: 1441133348, artist: 'The Beatles', title: 'I Want to Hold Your Hand' },
         { id: 1496273042, artist: 'Toni Basil', title: 'Hey Mickey' },
-        { id: 1440651216, artist: 'Queen', title: 'We Will Rock You' },
+        { id: 6781074741, artist: 'Queen', title: 'We Will Rock You' },
       ],
     },
     {

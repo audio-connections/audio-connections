@@ -18,12 +18,14 @@ import {
   type Draft,
   type DraftProblem,
 } from '../src/builder/draft.ts';
-import { findReuseWarnings, formatReuseWarning, type ReuseWarning } from '../src/puzzles.reuse.ts';
+import { DEFAULT_REUSE_OPTIONS, findReuseWarnings, formatReuseWarning, type ReuseWarning } from '../src/puzzles.reuse.ts';
 import { scheduledDates } from '../src/puzzles.proximity.ts';
 import { loadPuzzleContents } from './load-puzzles.ts';
 
 export const DRAFT_FILE = '.puzzle-draft.json';
 export const DRAFT_SLUG = 'draft';
+/** A track in another puzzle closer than this breaks the reuse rule. */
+export const TRACK_REUSE_DAYS = DEFAULT_REUSE_OPTIONS.idWarnDays;
 
 export function draftPath(root: string): string {
   return resolve(root, DRAFT_FILE);
@@ -115,6 +117,9 @@ export interface PriorUse {
   day?: number;
   date?: string;
   released: boolean;
+  /** Whole days between that puzzle and the draft's slot (the next open
+   *  one, or its scheduled date). Absent for a backlog puzzle. */
+  gap?: number;
 }
 
 export interface CheckResult {
@@ -123,8 +128,9 @@ export interface CheckResult {
   /** Proximity warnings as if the draft took the next open calendar slot. */
   reuse: string[];
   reuseRaw: ReuseWarning[];
-  /** Every draft track that already appears anywhere in the catalogue,
-   *  released days included — song freshness is the second-ranked rule. */
+  /** Draft tracks that appear in another puzzle fewer than TRACK_REUSE_DAYS
+   *  from the draft's slot, released days included, plus any backlog puzzle
+   *  (undated, so it could land next door). Older uses are left out. */
   priorUses: PriorUse[];
   /** Tracks (by slot) whose iTunes id has no preview clip — unplayable. */
   noPreview: string[];
@@ -154,6 +160,7 @@ export async function checkDraft(
     (w) => w.cur.slug === targetSlug || w.prev.slug === targetSlug,
   );
 
+  const draftDate = dates.get(targetSlug)!.date;
   const priorUses: PriorUse[] = [];
   draft.themes.forEach((t, i) =>
     t.tracks.forEach((tr, j) => {
@@ -161,12 +168,17 @@ export async function checkDraft(
       for (const [slug, content] of files) {
         if (!content.themes.some((th) => th.tracks.some((x) => x.id === tr.id))) continue;
         const when = dates.get(slug);
+        const gap = when
+          ? Math.round(Math.abs(new Date(draftDate).getTime() - new Date(when.date).getTime()) / 86_400_000)
+          : undefined;
+        if (gap !== undefined && gap >= TRACK_REUSE_DAYS) continue;
         priorUses.push({
           id: tr.id,
           slot: `${'ABCD'[i]}${j + 1}`,
           file: `${slug}.ts`,
           ...(when ? { day: when.day, date: when.date } : {}),
           released: !!when && when.date <= today,
+          ...(gap !== undefined ? { gap } : {}),
         });
       }
     }),

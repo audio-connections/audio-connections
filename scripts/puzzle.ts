@@ -33,6 +33,7 @@ import {
   searchItunes,
   writeDraft,
   DRAFT_FILE,
+  TRACK_REUSE_DAYS,
 } from '../vite-plugins/builder-ops.ts';
 import { loadPuzzleContents } from '../vite-plugins/load-puzzles.ts';
 import { coerceDraft, emptyDraft, emptyTrack, filledCount, parseSlot, slotName, SIDES, type Draft } from '../src/builder/draft.ts';
@@ -212,8 +213,8 @@ async function main(): Promise<void> {
       if (r.reuse.length) lines.push('', 'Reuse if scheduled at the next open slot (a maintainer may still space it out):', ...r.reuse.map((s) => `  • ${s}`));
       const prior = r.priorUses;
       if (prior.length) {
-        lines.push('', `Tracks already in the catalogue (${prior.length}) — song freshness is the second-ranked rule:`);
-        for (const p of prior) lines.push(`  • ${p.slot} (id ${p.id}) also in ${p.file}${p.day ? ` — Day ${p.day}, ${p.date}${p.released ? '' : ' (upcoming)'}` : ' (backlog)'}`);
+        lines.push('', `Tracks used within ${TRACK_REUSE_DAYS} days of this puzzle, or in the backlog (${prior.length}):`);
+        for (const p of prior) lines.push(`  • ${p.slot} (id ${p.id}) also in ${p.file}${p.day ? ` — Day ${p.day}, ${p.date}, ${p.gap} day(s) apart${p.released ? '' : ' (upcoming)'}` : ' (backlog)'}`);
       }
       if (!r.problems.length && !r.noPreview.length && !r.reuse.length) {
         lines.push('', slug ? `✓ ${slug}.ts is clean.` : '✓ Nothing collides. Ready: pnpm puzzle export <handle-N>');

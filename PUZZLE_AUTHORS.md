@@ -10,14 +10,14 @@ Each puzzle lives in its own file under `src/puzzles/`, named for you: `src/puzz
 
 ## Setup (one-time)
 
-1. Install [Node.js](https://nodejs.org/) (any recent version).
+1. Install [Node.js](https://nodejs.org/) (any recent version) and [pnpm](https://pnpm.io/) (`corepack enable` or `npm install -g pnpm`).
 2. Fork this repo on GitHub, then clone your fork:
    ```
    git clone https://github.com/YOUR-USERNAME/audio-connections.git
    cd audio-connections
-   npm run setup
+   pnpm run setup
    ```
-   (`npm run setup` runs `npm ci` plus `npx playwright install` — the latter is needed because our `.npmrc` blocks third-party install scripts as a supply-chain guard. Plain `npm install` works too if you'll only run `npm run validate` and never the Playwright suite.)
+   (`pnpm run setup` runs `pnpm install --frozen-lockfile` plus `pnpm exec playwright install` — the latter is needed because our `pnpm-workspace.yaml` blocks third-party install scripts as a supply-chain guard. Plain `pnpm install` works too if you'll only run `pnpm run validate` and never the Playwright suite.)
 
 ## Writing your puzzle
 
@@ -58,7 +58,7 @@ At any given time, there are some number of "staged" songs between today and you
 Run the validator from the project root:
 
 ```
-npm run validate
+pnpm run validate
 ```
 
 This checks:

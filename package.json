@@ -3,6 +3,7 @@
   "private": true,
   "version": "2.0.0",
   "type": "module",
+  "packageManager": "pnpm@12.6.0",
   "scripts": {
     "dev": "vite",
     "dev:https": "VITE_HTTPS=1 vite --host",
@@ -19,8 +20,8 @@
     "check:reuse": "node scripts/check-reuse.ts",
     "backlog:preview": "node scripts/schedule-preview.ts --backlog-only",
     "schedule:preview": "node scripts/schedule-preview.ts",
-    "validate": "npm run typecheck && npm run test:unit && npm run test:itunes && npm run test:past-days",
-    "setup": "npm ci && npx playwright install && git config core.hooksPath .githooks"
+    "validate": "pnpm run typecheck && pnpm run test:unit && pnpm run test:itunes && pnpm run test:past-days",
+    "setup": "pnpm install --frozen-lockfile && pnpm exec playwright install && git config core.hooksPath .githooks"
   },
   "dependencies": {
     "react": "^19.2.8",

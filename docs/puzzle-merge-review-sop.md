@@ -10,9 +10,9 @@ Review the submitted puzzle file in `src/puzzles/`.
 
 Before spending LLM tokens or doing semantic review, run the regular checks for mechanical validity:
 
-- `npm run test:unit`
-- `npm run test:itunes`
-- `npm run test:past-days` when a PR touches puzzle files or schedule files
+- `pnpm run test:unit`
+- `pnpm run test:itunes`
+- `pnpm run test:past-days` when a PR touches puzzle files or schedule files
 
 Automated checks catch file shape, required fields, duplicate track IDs, duplicate category labels, exact duplicate artist/title pairs, iTunes song validity, and released-day movement. They do not decide whether the puzzle is fun, fair, clear, or appropriately difficult.
 

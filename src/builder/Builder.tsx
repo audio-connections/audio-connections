@@ -199,7 +199,7 @@ export function Builder() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ slug: slug.trim(), overwrite }),
       });
-      setExportMsg({ ok: true, text: `Wrote ${r.path}. Next: npm run validate, then open a PR.` });
+      setExportMsg({ ok: true, text: `Wrote ${r.path}. Next: pnpm run validate, then open a PR.` });
     } catch (e) {
       setExportMsg({ ok: false, text: (e as Error).message });
     }
@@ -222,7 +222,7 @@ export function Builder() {
         <div>
           <h1>Puzzle builder</h1>
           <p className="editor-sub">
-            Dev only. Draft lives in <code>.puzzle-draft.json</code>; the terminal can edit it too (<code>npm run puzzle</code>).
+            Dev only. Draft lives in <code>.puzzle-draft.json</code>; the terminal can edit it too (<code>pnpm puzzle</code>).
             <a href="/" className="editor-link">← Back to game</a>
           </p>
         </div>

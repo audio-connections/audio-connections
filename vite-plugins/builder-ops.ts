@@ -130,9 +130,15 @@ export interface CheckResult {
   noPreview: string[];
 }
 
-export async function checkDraft(root: string, draft: Draft, opts: { today?: string; verifyPreviews?: boolean } = {}): Promise<CheckResult> {
+export async function checkDraft(
+  root: string,
+  draft: Draft,
+  opts: { today?: string; verifyPreviews?: boolean; slug?: string } = {},
+): Promise<CheckResult> {
   const today = opts.today ?? new Date().toISOString().slice(0, 10);
+  const targetSlug = opts.slug ?? DRAFT_SLUG;
   const files = await loadPuzzleContents(resolve(root, 'src/puzzles'));
+  files.delete(targetSlug);
   const dates = new Map(scheduledDates());
   let last = '';
   let lastDay = 0;
@@ -140,10 +146,12 @@ export async function checkDraft(root: string, draft: Draft, opts: { today?: str
   const nextDate = last ? new Date(new Date(last).getTime() + 86_400_000).toISOString().slice(0, 10) : today;
 
   const all = new Map(files);
-  all.set(DRAFT_SLUG, draftToContent(draft));
-  dates.set(DRAFT_SLUG, { day: lastDay + 1, date: nextDate });
+  all.set(targetSlug, draftToContent(draft));
+  if (!dates.has(targetSlug)) {
+    dates.set(targetSlug, { day: lastDay + 1, date: nextDate });
+  }
   const reuseRaw = findReuseWarnings(all, dates, { today }).filter(
-    (w) => w.cur.slug === DRAFT_SLUG || w.prev.slug === DRAFT_SLUG,
+    (w) => w.cur.slug === targetSlug || w.prev.slug === targetSlug,
   );
 
   const priorUses: PriorUse[] = [];

@@ -19,6 +19,8 @@
     "test:past-days": "node scripts/check-past-days.ts",
     "check:reuse": "node scripts/check-reuse.ts",
     "puzzle": "node scripts/puzzle.ts",
+    "itunes:search": "node scripts/puzzle.ts search",
+    "itunes:lookup": "node scripts/puzzle.ts lookup",
     "backlog:preview": "node scripts/schedule-preview.ts --backlog-only",
     "schedule:preview": "node scripts/schedule-preview.ts",
     "validate": "pnpm run typecheck && pnpm run test:unit && pnpm run test:itunes && pnpm run test:past-days",

@@ -25,7 +25,9 @@ pnpm test               Playwright end-to-end. ~15s. Builds once and serves it w
 pnpm run validate       Composite for puzzle authors: pnpm run typecheck + test:unit + test:itunes + test:past-days.
 pnpm run test:past-days Fails if you moved an already-released puzzle (reorder/rename/re-date). Diffs against origin/main.
 pnpm run check:reuse    Maintainer-only. Lists cross-puzzle reuse still worth acting on: a category label repeated within 45 days, an iTunes id or song within 14 days, an artist within 7. Names future days, so not part of validate.
-pnpm run puzzle         Terminal side of the puzzle builder (draft in .puzzle-draft.json, shared with /?mode=builder on the dev server). See docs/puzzle-builder.md.
+pnpm puzzle             Terminal side of the puzzle builder (draft in .puzzle-draft.json, shared with /?mode=builder on the dev server). See docs/puzzle-builder.md.
+pnpm itunes:search      Search iTunes for songs with preview status and track IDs (`pnpm itunes:search "Artist - Title"`).
+pnpm itunes:lookup      Look up one or more iTunes track IDs and check preview availability (`pnpm itunes:lookup 1440891230`).
 pnpm run schedule:preview  Print the resolved schedule, backlog count, and warnings (thin runway, calendar gaps). Read-only.
 pnpm run backlog:preview   Print the unscheduled puzzle backlog list and scheduling next step.
 ```

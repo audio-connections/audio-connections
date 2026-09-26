@@ -1,23 +1,29 @@
-// puzzle — terminal side of the puzzle builder. Same draft file as the
-// browser page at /?mode=builder (dev server), so a person in the browser and
-// an agent in the terminal work on one draft. No jq, no curl: every step is a
-// subcommand with readable output (add --json for machine output).
+// puzzle — terminal side of the puzzle builder & iTunes helper. Same draft file
+// as the browser page at /?mode=builder (dev server), so a person in the
+// browser and an agent in the terminal work on one draft. No jq, no curl: every
+// step is a subcommand with readable output (add --json for machine output).
 //
-//   npm run puzzle -- show                     current draft
-//   npm run puzzle -- search "thong song"      iTunes hits with ids (10 per term; --limit=25 for more)
-//   npm run puzzle -- search "Sisqo - Thong Song" "Ginuwine - Pony"   several searches at once, grouped
-//   npm run puzzle -- add A 1440891230         fill next empty slot on side A (or A3 for a slot)
-//   npm run puzzle -- remove B2
-//   npm run puzzle -- set author "Your Name"
-//   npm run puzzle -- set constraint "All #1 hits"   (blank to clear)
-//   npm run puzzle -- set A "Songs about rain"       category name
-//   npm run puzzle -- note C1 "Why this fits"        (blank to clear)
-//   npm run puzzle -- check                    completeness + reuse against the catalogue
-//   npm run puzzle -- export handle-3          write src/puzzles/handle-3.ts (--overwrite to replace)
-//   npm run puzzle -- clear                    start over
+//   pnpm puzzle show                           current draft
+//   pnpm puzzle search "thong song"            iTunes hits with ids (10 per term; --limit=25 for more)
+//   pnpm puzzle search "Sisqo - Thong Song" "Ginuwine - Pony"   several searches at once, grouped
+//   pnpm puzzle lookup 1440891230 [269573364]  look up track id(s) without modifying the draft
+//   pnpm puzzle add A 1440891230               fill next empty slot on side A (or A3 for a slot)
+//   pnpm puzzle remove B2
+//   pnpm puzzle set author "Your Name"
+//   pnpm puzzle set constraint "All #1 hits"   (blank to clear)
+//   pnpm puzzle set A "Songs about rain"       category name
+//   pnpm puzzle note C1 "Why this fits"        (blank to clear)
+//   pnpm puzzle check [slug]                   completeness + reuse + previews (draft or src/puzzles/<slug>.ts)
+//   pnpm puzzle export handle-3                write src/puzzles/handle-3.ts (--overwrite to replace)
+//   pnpm puzzle clear                          start over
+//
+// Top-level shortcuts:
+//   pnpm itunes:search "<term>" ["<term>" ...] [--limit=N] [--json]
+//   pnpm itunes:lookup <id> [<id> ...] [--json]
 //
 // Runs on plain Node via native TS type-stripping; the dev server does not
 // need to be running.
+import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   checkDraft,
@@ -28,7 +34,8 @@ import {
   writeDraft,
   DRAFT_FILE,
 } from '../vite-plugins/builder-ops.ts';
-import { emptyDraft, emptyTrack, filledCount, parseSlot, slotName, SIDES, type Draft } from '../src/builder/draft.ts';
+import { loadPuzzleContents } from '../vite-plugins/load-puzzles.ts';
+import { coerceDraft, emptyDraft, emptyTrack, filledCount, parseSlot, slotName, SIDES, type Draft } from '../src/builder/draft.ts';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const argv = process.argv.slice(2);
@@ -86,7 +93,7 @@ async function main(): Promise<void> {
       // Each argument is one search, so an agent can look up a whole
       // candidate list in one call: search "Artist - Title" "Other - Title".
       const terms = rest.map((t) => t.trim()).filter(Boolean);
-      if (terms.length === 0) fail('usage: search "<term>" ["<term>" ...] [--limit N]   (quote multi-word terms)');
+      if (terms.length === 0) fail('usage: search "<term>" ["<term>" ...] [--limit=N]   (quote multi-word terms)');
       const results = await Promise.all(
         terms.map(async (term) => {
           try {
@@ -103,7 +110,30 @@ async function main(): Promise<void> {
         const lines = r.hits.map((h) => `${String(h.id).padStart(11)}  ${h.previewUrl ? ' ' : '✗'}  ${h.artist} — ${h.title}  [${h.album}${h.year ? `, ${h.year}` : ''}]`);
         return head + lines.join('\n');
       });
-      return out(`${blocks.join('\n\n')}\n\n(✗ = no preview clip; unusable)  →  npm run puzzle -- add <side> <id>`, results);
+      return out(`${blocks.join('\n\n')}\n\n(✗ = no preview clip; unusable)  →  pnpm puzzle add <side> <id>`, results);
+    }
+    case 'lookup': {
+      const ids = rest
+        .flatMap((arg) => arg.split(','))
+        .map((s) => Number(s.trim()))
+        .filter((n) => Number.isFinite(n) && n > 0);
+      if (ids.length === 0) fail('usage: lookup <id> [<id> ...]   (space- or comma-separated numeric iTunes IDs)');
+      const hits = await lookupItunes(ids);
+      const byId = new Map(hits.map((h) => [h.id, h]));
+      const missing: number[] = [];
+      const noPreview: number[] = [];
+      const lines = ids.map((id) => {
+        const h = byId.get(id);
+        if (!h) {
+          missing.push(id);
+          return `${String(id).padStart(11)}  ✗  (not found or not a song track)`;
+        }
+        if (!h.previewUrl) noPreview.push(id);
+        return `${String(h.id).padStart(11)}  ${h.previewUrl ? '✓' : '✗'}  ${h.artist} — ${h.title}  [${h.album}${h.year ? `, ${h.year}` : ''}]`;
+      });
+      out(lines.join('\n'), { hits, missing, noPreview });
+      if (missing.length > 0 || noPreview.length > 0) process.exit(1);
+      return;
     }
     case 'add': {
       const [slot, idRaw] = rest;
@@ -163,9 +193,19 @@ async function main(): Promise<void> {
       return out(`${slotName(ref)} note: ${tr.note || '(cleared)'}`, { slot: slotName(ref), note: tr.note });
     }
     case 'check': {
-      const d = readDraft(ROOT);
-      const r = await checkDraft(ROOT, d, { verifyPreviews: true });
-      const lines: string[] = [`${r.filled}/16 slots filled`];
+      let d: Draft;
+      let slug: string | undefined;
+      if (rest[0]) {
+        slug = rest[0].replace(/^src\/puzzles\//, '').replace(/\.ts$/, '');
+        const files = await loadPuzzleContents(resolve(ROOT, 'src/puzzles'));
+        const content = files.get(slug);
+        if (!content) fail(`puzzle "${slug}" not found in src/puzzles/`);
+        d = coerceDraft(content);
+      } else {
+        d = readDraft(ROOT);
+      }
+      const r = await checkDraft(ROOT, d, { verifyPreviews: true, ...(slug ? { slug } : {}) });
+      const lines: string[] = [`${r.filled}/16 slots filled${slug ? ` (${slug}.ts)` : ''}`];
       if (r.problems.length) lines.push('', 'Not ready to export:', ...r.problems.map((p) => `  • ${p.message}`));
       else lines.push('', '✓ Complete — every slot filled, no in-file duplicates.');
       if (r.noPreview.length) lines.push('', `No preview clip (unplayable): ${r.noPreview.join(', ')}`);
@@ -175,7 +215,9 @@ async function main(): Promise<void> {
         lines.push('', `Tracks already in the catalogue (${prior.length}) — song freshness is the second-ranked rule:`);
         for (const p of prior) lines.push(`  • ${p.slot} (id ${p.id}) also in ${p.file}${p.day ? ` — Day ${p.day}, ${p.date}${p.released ? '' : ' (upcoming)'}` : ' (backlog)'}`);
       }
-      if (!r.problems.length && !r.noPreview.length && !r.reuse.length) lines.push('', '✓ Nothing collides. Ready: npm run puzzle -- export <handle-N>');
+      if (!r.problems.length && !r.noPreview.length && !r.reuse.length) {
+        lines.push('', slug ? `✓ ${slug}.ts is clean.` : '✓ Nothing collides. Ready: pnpm puzzle export <handle-N>');
+      }
       out(lines.join('\n'), r);
       if (r.problems.length || r.noPreview.length) process.exit(1);
       return;
@@ -186,7 +228,7 @@ async function main(): Promise<void> {
       const d = readDraft(ROOT);
       try {
         const r = exportDraft(ROOT, d, slug, OVERWRITE);
-        return out(`Wrote ${r.path}\nNext: npm run validate, then open a PR (the draft is left in place; run "clear" to start another).`, r);
+        return out(`Wrote ${r.path}\nNext: pnpm run validate, then open a PR (the draft is left in place; run "clear" to start another).`, r);
       } catch (e) {
         fail(e instanceof Error ? e.message : String(e));
       }

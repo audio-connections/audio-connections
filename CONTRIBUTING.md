@@ -6,6 +6,7 @@ For puzzle submissions, see [PUZZLE_AUTHORS.md](./PUZZLE_AUTHORS.md). This doc i
 
 - `src/` — application code (React + TypeScript, built with Vite).
 - `src/puzzles/` — one TypeScript file per puzzle, content only, named for its author (see PUZZLE_AUTHORS.md). Day numbers and dates are derived from `src/schedule.ts`, not stored in the files.
+- `src/builder/` — the dev-only puzzle builder page (`/?mode=builder` under `pnpm run dev`; not in the production bundle). Its server side is `vite-plugins/builder-dev.ts` + `builder-ops.ts`, its CLI `scripts/puzzle.ts`. See docs/puzzle-builder.md.
 - `tests/` — Playwright end-to-end tests.
 - `vite-plugins/`, `public/`, `icons/` — build assets.
 - `.github/workflows/` — CI definitions.
@@ -24,6 +25,9 @@ pnpm test               Playwright end-to-end. ~15s. Builds once and serves it w
 pnpm run validate       Composite for puzzle authors: pnpm run typecheck + test:unit + test:itunes + test:past-days.
 pnpm run test:past-days Fails if you moved an already-released puzzle (reorder/rename/re-date). Diffs against origin/main.
 pnpm run check:reuse    Maintainer-only. Lists cross-puzzle reuse still worth acting on: a category label repeated within 45 days, an iTunes id or song within 14 days, an artist within 7. Names future days, so not part of validate.
+pnpm puzzle             Terminal side of the puzzle builder (draft in .puzzle-draft.json, shared with /?mode=builder on the dev server). See docs/puzzle-builder.md.
+pnpm itunes:search      Search iTunes for songs with preview status and track IDs (`pnpm itunes:search "Artist - Title"`).
+pnpm itunes:lookup      Look up one or more iTunes track IDs and check preview availability (`pnpm itunes:lookup 1440891230`).
 pnpm run schedule:preview  Print the resolved schedule, backlog count, and warnings (thin runway, calendar gaps). Read-only.
 pnpm run backlog:preview   Print the unscheduled puzzle backlog list and scheduling next step.
 ```

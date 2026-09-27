@@ -22,7 +22,7 @@ const puzzle: PuzzleContent = {
       ],
     },
     {
-      theme: 'Hit songs written or co-written by Babyface for other artists',
+      theme: 'Hit songs written by Babyface for other artists',
       tracks: [
         { id: 1440926391, artist: 'Boyz II Men', title: "I'll Make Love to You", note: 'Written and produced by Babyface — 14 weeks at #1' },
         { id: 288167226, artist: 'Toni Braxton', title: 'Breathe Again', note: "Written by Babyface for Toni Braxton's debut album" },
@@ -31,10 +31,10 @@ const puzzle: PuzzleContent = {
       ],
     },
     {
-      theme: 'Musicians who worked as schoolteachers before fame',
+      theme: 'Musicians who worked as schoolteachers',
       tracks: [
         { id: 1650882898, artist: 'Sting', title: 'Englishman In New York', note: "Taught at St Paul's First School in Cramlington before The Police" },
-        { id: 355038523, artist: 'Roberta Flack', title: 'Killing Me Softly With His Song', note: 'Taught music and English in Washington, D.C. junior high schools' },
+        { id: 355038523, artist: 'Roberta Flack', title: 'Killing Me Softly With His Song', note: 'Taught music and English in Farmville, NC, then at D.C. junior high schools' },
         { id: 1440907214, artist: 'Sheryl Crow', title: 'Soak Up the Sun', note: 'Music teacher at Kellison Elementary in Fenton, Missouri' },
         { id: 201409747, artist: 'Art Garfunkel', title: 'All I Know', note: 'Taught math at Litchfield Preparatory School in Connecticut (1971)' },
       ],

@@ -33,10 +33,10 @@ const puzzle: PuzzleContent = {
     {
       theme: 'Guest stars on The Muppet Show',
       tracks: [
-        { id: 191035851, artist: 'Alice Cooper', title: 'Poison', note: 'Season 3 (1978) — played the Devil\'s agent, sang "Welcome to My Nightmare"' },
-        { id: 1440929996, artist: 'Blondie', title: 'One Way or Another', note: 'Debbie Harry guest-starred in 1981 and performed this with the Muppet band' },
-        { id: 267251847, artist: 'Harry Belafonte', title: 'Jamaica Farewell', note: 'Season 3 — performed "Day-O" and "Turn the World Around"' },
-        { id: 872638018, artist: 'Linda Ronstadt', title: 'Blue Bayou', note: 'Season 5 — sang "Blue Bayou" in a Muppet swamp' },
+        { id: 355055115, artist: 'Alice Cooper', title: 'Welcome to My Nightmare', note: "Season 3 (1978) — played the Devil's agent and sang this on the show" },
+        { id: 1440929996, artist: 'Blondie', title: 'One Way or Another', note: 'Debbie Harry guest-starred in 1981 and sang this on the show' },
+        { id: 175541237, artist: 'Harry Belafonte', title: 'Turn the World Around', note: 'Season 3 — sang this on the show surrounded by Muppet tribal masks' },
+        { id: 872638018, artist: 'Linda Ronstadt', title: 'Blue Bayou', note: 'Season 5 — sang this on the show in a Muppet swamp' },
       ],
     },
   ],

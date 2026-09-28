@@ -36,7 +36,7 @@ const puzzle: PuzzleContent = {
         { id: 693789492, artist: 'The Proclaimers', title: "I'm On My Way", note: 'Twin brothers Craig and Charlie Reid' },
         { id: 1111759273, artist: 'Tegan and Sara', title: 'Closer', note: 'Twin sisters Tegan and Sara Quin' },
         { id: 288051955, artist: 'Good Charlotte', title: 'Lifestyles of the Rich & Famous', note: 'Twin brothers Joel and Benji Madden' },
-        { id: 1444203853, artist: 'Nelson', title: "(Can't Live Without Your) Love and Affection", note: 'Twin brothers Matthew and Gunnar Nelson' },
+        { id: 40702139, artist: 'Blonde Redhead', title: 'For the Damaged Coda (Extra Track)', note: 'Twin brothers Amedeo and Simone Pace' },
       ],
     },
   ],

@@ -1,8 +1,11 @@
 # Supply-chain cooldown: only install package versions that have been
-# published for at least 7 days (10080 minutes). Guards against installing
-# a freshly-compromised release. (pnpm reads project settings from
-# pnpm-workspace.yaml rather than .npmrc in pnpm v11+.)
-minimumReleaseAge: 10080
+# published for at least 3 days (4320 minutes). Guards against installing
+# a freshly-compromised release. The window is shorter than a standalone
+# cooldown would need because adds/updates also go through Socket Firewall
+# (`sfw pnpm add|update`), which blocks known-malicious packages at fetch
+# time. (pnpm reads project settings from pnpm-workspace.yaml rather than
+# .npmrc in pnpm v11+.)
+minimumReleaseAge: 4320
 
 # Block lifecycle scripts (preinstall / install / postinstall) from
 # every package on install. Primary attack vector for npm supply-chain

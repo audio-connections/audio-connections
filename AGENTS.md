@@ -3,7 +3,8 @@
 ## Package Manager & Installs
 - This repository uses **`pnpm`** (`pnpm@12.6.0`). Do not use `npm` or `npx`.
 - Run `pnpm run setup` for first-time setup (`pnpm install --frozen-lockfile` + Playwright browser install + git hooks).
-- Supply-chain protections (`minimumReleaseAge: 10080` = 7 days, `ignoreScripts: true`) are configured in `pnpm-workspace.yaml`.
+- Supply-chain protections (`minimumReleaseAge: 4320` = 3 days, `ignoreScripts: true`) are configured in `pnpm-workspace.yaml`.
+- Add or update dependencies through Socket Firewall: `sfw pnpm add <pkg>` / `sfw pnpm update`. The 3-day cooldown assumes this second layer is in place.
 
 ## Puzzle Authoring & iTunes Lookup CLI (Do Not Use `curl` / `jq` / `python3`)
 Never craft ad-hoc `curl`, `jq`, or `python3` scripts to query the iTunes API or check track collisions. Use the built-in `pnpm` commands instead:
